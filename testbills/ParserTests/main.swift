@@ -199,6 +199,55 @@ do {
     """)
     check("Bad statement: math_statement fires", rules(bill).contains("math_statement"), "\(rules(bill)) \(bill.totals)")
 }
+// MARK: Real statements that once drew false red findings
+
+do {
+    // Stanford Health Care's public sample statement, as OCR actually read it.
+    // Honest: $627.00 charged, $313.50 adjusted, $313.50 due. Must stay silent.
+    let bill = BillParser.parse(text: """
+    Stanford Monthly Statement
+    HEALTH CARE
+    Page 1 of 2
+    STANFORD MEDICINE
+    • YOUR IN FORMATION • YOUR ACCOUNT SUMMARY
+    Statement Date 6/27/2016 Total Charges $627.00
+    Guarantor Name DOE SR, JOHN Patient Payments $0.00
+    123456789 Insurance Payments $0.00
+    Guarantor ID # Insurance Adjustments $0.00
+    4 Account Numbers Located on following pages Other Adjustments $-313.50
+    Payment Due Date 7/25/2016 10
+    AMOUNT DUE NOW $313.50 11
+    Guarantor ID 123456789
+    Statement Date 6/27/2016
+    HEALTH CARE 16 Amount Due $313.50
+    """)
+    let found = RulesEngine.analyze(bill)
+    check("Stanford: no likely-error findings",
+          !found.contains { $0.severity == .likelyError }, "\(found.map(\.ruleID))")
+    check("Stanford: no math finding", !found.contains { $0.ruleID.hasPrefix("math") })
+}
+do {
+    // Overpaid statement. A credit balance is good news, not a provider error.
+    let bill = BillParser.parse(text: """
+    GRANITE STATE DERMATOLOGY
+    PATIENT STATEMENT
+    Statement Date 09/01/2026
+    DATE DESCRIPTION CODE QTY AMOUNT
+    08/04/26 OFFICE VISIT LEVEL 3 99213 1 $185.00
+    08/04/26 SKIN BIOPSY SINGLE LESION 11102 1 $225.00
+    08/04/26 SPECIMEN HANDLING 99000 $0.00
+    08/04/26 PATIENT EDUCATION MATERIALS 1 NO CHARGE
+    08/20/26 PATIENT PAYMENT -$500.00
+    Total Charges $410.00
+    Payments Received -$500.00
+    Credit Balance -$90.00
+    """)
+    let found = RulesEngine.analyze(bill)
+    check("Granite: refund flagged", found.contains { $0.ruleID == "credit_balance" }, "\(found.map(\.ruleID))")
+    check("Granite: nothing red", !found.contains { $0.severity == .likelyError },
+          "\(found.filter { $0.severity == .likelyError }.map(\.ruleID))")
+}
+
 // MARK: Dates and quantities
 
 do {
