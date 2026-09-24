@@ -80,7 +80,7 @@ chat. Compiling the real sources means the tests cannot drift from the app.
 ## Shipping state
 
 - Bundle `com.limeshield.LimeShield`, Apple ID 6811397021.
-- Version 1.0, build 2 uploaded.
+- Version 1.0. Build 2 was rejected; build 3 has the fixes, not yet uploaded.
 - Rejected under 2.1(b) on 2026-09-24: reviewer on iPad Air (M3), iPadOS 27
   saw "The product is not available for purchase." on the paywall.
 - Rejected once under 3.1.2 because the App Description lacked a link to
@@ -90,13 +90,22 @@ chat. Compiling the real sources means the tests cannot drift from the app.
 
 ## Known open work
 
-- The review letter is gated on the scan allowance rather than its own, so a
-  free user who has used both scans cannot open letters for bills they already
-  scanned. Worth giving letters their own small allowance.
-- 16 of the 46 rules have never fired in testing. Each needs a bill that
-  triggers it or it is decoration.
 - Reference prices are broad national ballparks with no citations. The app
   says so, but sourced figures would be better.
-- One scan in History shows a red arithmetic finding against a real Stanford
-  statement. Unclear whether it predates the parser rewrite or is a surviving
-  false positive. Worth checking before trusting that rule.
+- MMDDYY dates ("030126") on hospital statements aren't parsed. The
+  no-service-dates rule stays silent for them instead. Parsing them safely
+  needs a way to tell them from reference numbers.
+- A credit-balance refund is "know your rights", so it can't go in a review
+  letter. A refund-request letter would be useful.
+
+## Resolved 2026-09-24 (don't reintroduce)
+
+- History used to show the findings saved at scan time forever, so findings
+  a later version withdrew (the red Stanford/Granite State ones) survived.
+  `AnalysisStore.load()` now re-runs today's rules on each saved bill.
+- Review letters have their own allowance (2 free, tied to the bill), so a
+  free user's last scan doesn't lock them out of its letter.
+- Insurer EOBs and multi-bill scans don't use up a free scan.
+- Every rule has a fixture that triggers it. `quantity_math` could never fire
+  and `already_paid` was red on wording; both fixed.
+- Sample bills don't count toward "Flagged so far".

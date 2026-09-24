@@ -311,7 +311,10 @@ struct HomeView: View {
             bill: bill,
             issues: issues)
         store.add(analysis)
-        if countsAgainstFreeTier { purchases.recordScan() }
+        // An insurer EOB, or two bills photographed together, is turned away rather
+        // than analysed, so it shouldn't use up one of the free scans.
+        let wasAnalysed = bill.kind != .insurerEOB && bill.multipleBillsDetected != true
+        if countsAgainstFreeTier && wasAnalysed { purchases.recordScan() }
         newAnalysis = analysis
     }
 }
