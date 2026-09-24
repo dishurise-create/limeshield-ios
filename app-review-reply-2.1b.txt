@@ -1,0 +1,17 @@
+Hello,
+
+Thank you for the report. We have looked into the in-app purchase error on iPad Air 11-inch (M3).
+
+The message the reviewer saw, "The product is not available for purchase", is returned by StoreKit when it declines to sell a product, rather than by the app. We have since confirmed the following in App Store Connect:
+
+- The Paid Apps Agreement is active, with banking and tax information complete.
+- The subscription "Lime Shield Pro" (limeshield_pro_monthly, 1 month, 2.99 USD) is attached to this version and submitted with it, with its localization, review screenshot and availability in all territories.
+
+We have tested the purchase flow again in the sandbox, on an iPad Air 11-inch simulator as well as on iPhone: the product loads with its price and the App Store purchase sheet appears when the subscribe button is tapped.
+
+Build 3 also makes the purchase screen more robust: if the App Store reports the product as unavailable, the app now reloads the product and retries once before showing a message, clears old error messages on each new attempt, and offers a "Try again" button if the product cannot be loaded, instead of a spinner.
+
+To test: open the Premium tab (fourth tab in the bottom bar) and tap "Lime Shield Pro, $2.99 per month". No account or prior action is needed. A built-in example bill is available from "Sample" on the home screen if you would like to see the rest of the app.
+
+Thank you,
+Lime Shield
