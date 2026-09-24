@@ -80,7 +80,12 @@ chat. Compiling the real sources means the tests cannot drift from the app.
 ## Shipping state
 
 - Bundle `com.limeshield.LimeShield`, Apple ID 6811397021.
-- Version 1.0. Build 2 was rejected; build 3 has the fixes, not yet uploaded.
+- Version 1.0. Build 2 was rejected. Build 3 uploaded and resubmitted
+  2026-09-24 with a reply to App Review (`app-review-reply-2.1b.txt`).
+- Checked 2026-09-24 and all fine: Paid Apps Agreement, banking and W-9
+  Active; Pro Monthly Ready for Review, all regions; RevenueCat IAP key valid;
+  `pro` entitlement attached to the App Store product. So the 2.1(b)
+  rejection was most likely a sandbox glitch, not configuration.
 - Rejected under 2.1(b) on 2026-09-24: reviewer on iPad Air (M3), iPadOS 27
   saw "The product is not available for purchase." on the paywall.
 - Rejected once under 3.1.2 because the App Description lacked a link to
