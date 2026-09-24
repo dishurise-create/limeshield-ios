@@ -52,13 +52,19 @@ Everything else is phrased as a question.
 
 ## Verification
 
-`testbills/simulate_v8.py` is a Python port of the classification logic with
-fixtures whose answers are known. Run it after any parser change. It has
-already caught two regressions that would otherwise have shipped.
+`testbills/run_parser_tests.sh` compiles the app's real `BillParser`, `Models`,
+`ReferenceData` and `RulesEngine*` sources on the Mac together with the
+fixtures in `testbills/ParserTests/main.swift`, and runs them. Each fixture has
+a known answer, and most encode one of the parser rules above. Run it after
+any parser or rules change, and add a fixture for every new bug found.
 
 ```
-python3 testbills/simulate_v8.py
+testbills/run_parser_tests.sh
 ```
+
+It replaced `simulate_v8.py`, a Python port that was lost in the move from
+chat. Compiling the real sources means the tests cannot drift from the app.
+`testbills/*.png` are the rendered test bills from `make_bills.py`.
 
 ## Conventions
 
