@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lime Shield Support</title>
+<style>
+  :root {
+    --ink: #16181d;
+    --muted: #5d6470;
+    --line: #e4e7ec;
+    --lime: #6fb50f;
+    --bg: #ffffff;
+    --card: #f7f8fa;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ink: #eef1f5; --muted: #9aa3b0; --line: #2a2f38;
+      --lime: #8fd327; --bg: #14161a; --card: #1b1e24;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 17px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 680px; margin: 0 auto; padding: 56px 20px 96px; }
+  header { border-bottom: 1px solid var(--line); padding-bottom: 28px; margin-bottom: 36px; }
+  .mark {
+    display: inline-block; font-weight: 700; letter-spacing: -0.01em;
+    font-size: 20px; color: var(--lime);
+  }
+  h1 { font-size: 30px; line-height: 1.25; margin: 14px 0 8px; letter-spacing: -0.02em; }
+  .sub { color: var(--muted); font-size: 16px; margin: 0; }
+  h2 { font-size: 19px; margin: 40px 0 10px; letter-spacing: -0.01em; }
+  h3 { font-size: 17px; margin: 24px 0 6px; }
+  p { margin: 0 0 14px; }
+  ul { margin: 0 0 14px; padding-left: 22px; }
+  li { margin-bottom: 7px; }
+  a { color: var(--lime); }
+  .contact {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 14px; padding: 20px 22px; margin: 8px 0 8px;
+  }
+  .contact p { margin: 0; }
+  .email { font-size: 19px; font-weight: 600; }
+  footer {
+    margin-top: 56px; padding-top: 22px; border-top: 1px solid var(--line);
+    color: var(--muted); font-size: 15px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <span class="mark">Lime Shield</span>
+  <h1>Support</h1>
+  <p class="sub">Help with scanning bills, subscriptions, and privacy.</p>
+</header>
+
+<div class="contact">
+  <p>Email us and we'll reply, usually within two days.</p>
+  <p class="email"><a href="mailto:bbandarpalli@gmail.com">bbandarpalli@gmail.com</a></p>
+</div>
+
+<h2>Common questions</h2>
+
+<h3>The scan missed charges, or read an amount wrong</h3>
+<p>Text recognition is not perfect, especially on folded paper, faint print, or unusual layouts. On any results screen, tap <strong>Edit what the scan read</strong> to correct an amount or add a missing charge. The findings are worked out again from your corrections.</p>
+
+<h3>Lime Shield found nothing on my bill</h3>
+<p>That means nothing was detected, not that nothing is wrong. Bills that arrive as a one-line summary have nothing to check. Ask your provider for an itemized statement, which they are generally required to give you, and scan that instead. Lime Shield can write the request letter for you.</p>
+
+<h3>It flagged something that turned out to be correct</h3>
+<p>That is expected and does not mean the app failed. Findings under "Worth checking" are questions to ask, not accusations. A charge can be completely legitimate and still be worth understanding. Only findings under "Likely error" describe arithmetic that does not add up.</p>
+
+<h3>My scan says "This is an EOB, not a bill"</h3>
+<p>An Explanation of Benefits comes from your insurance company and shows what they processed, not what you owe. The amounts on it are not a bill, so Lime Shield stops rather than analysing figures you were never charged. Wait for the provider's actual bill, then scan that.</p>
+
+<h3>Where are my bills stored?</h3>
+<p>Only on your iPhone, inside the app. They are never uploaded. See the <a href="privacy.html">privacy policy</a> for the full explanation.</p>
+
+<h3>How do I delete my scans?</h3>
+<p>Swipe a scan away in the History tab to remove one. To remove everything, open Settings from the home screen and choose Delete all past scans. Deleting the app also deletes them.</p>
+
+<h2>Subscriptions</h2>
+
+<h3>What does Lime Shield Pro include?</h3>
+<p>Unlimited bill scans and unlimited letters. Everything else, including the privacy guarantee, is identical on the free tier.</p>
+
+<h3>How do I cancel?</h3>
+<p>Subscriptions are managed by Apple, not by us. On your iPhone open Settings, tap your name at the top, then Subscriptions, then Lime Shield. Cancelling there stops any future renewal.</p>
+
+<h3>I paid but the app still shows the free tier</h3>
+<p>Open the Premium tab and tap <strong>Restore purchases</strong>. If that does not resolve it, email us with the date of purchase and we will look into it.</p>
+
+<h2>Reporting a problem</h2>
+<p>If a bill produced a result that looks wrong, the most useful thing you can send is a description of what the app said and what the bill actually says. Turn on <strong>Show scan details</strong> in Settings, open the scan, and the Scan details screen will show exactly what was read.</p>
+<p>Please do not email us your actual medical bill. We do not want it, and you should not send medical information over email. Describing the problem is enough.</p>
+
+<footer>
+  Lime Shield is an informational tool. It does not provide legal, medical, or financial
+  advice, and a flagged item is not proof that anything on your bill is wrong.
+</footer>
+
+</div>
+</body>
+</html>

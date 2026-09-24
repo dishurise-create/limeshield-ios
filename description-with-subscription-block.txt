@@ -1,0 +1,66 @@
+Medical bills are confusing on purpose, and almost nobody checks them line by line. Lime Shield does that for you, on your phone, in seconds.
+
+Photograph a bill and Lime Shield reads it, checks every charge against 46 common billing problems, and tells you plainly what is worth questioning and what to say when you ask.
+
+YOUR BILL NEVER LEAVES YOUR PHONE
+
+This is the part that makes Lime Shield different. There is no server. Your bill is photographed, read, and analysed entirely on your device using Apple's built-in text recognition. Nothing is uploaded, no account is required, and nobody can read your medical information through this app, including us. You can put your phone in airplane mode and Lime Shield works exactly the same.
+
+WHAT IT CHECKS FOR
+
+Arithmetic that does not add up, like line items summing to more than the stated total.
+
+Duplicate charges, the same service billed twice on one day or repeated across dates.
+
+Prices far above typical rates for the billing code used.
+
+Over-the-counter medicine at hospital prices, and basic supplies billed on top of the room fee.
+
+Vague lump sums like "miscellaneous supplies" with no explanation.
+
+Lab tests billed separately from the panel that already includes them.
+
+After-hours fees, missed appointment fees, facility fees, and interest charges.
+
+Impossible quantities, service dates after discharge, and charges with no date at all.
+
+Plus rights you may not know you have: itemized bills on request, protections under the No Surprises Act, financial assistance policies, and what to do when a bill arrives long after the care did.
+
+HONEST ABOUT WHAT IT IS
+
+Lime Shield sorts findings into three levels, and the wording is deliberate.
+
+Likely error means the arithmetic does not work. These are the only findings stated as errors.
+
+Worth checking means something that is commonly a mistake but can be perfectly legitimate. These are phrased as questions to ask, never as accusations.
+
+Know your rights is background information, not a problem with your bill.
+
+A flagged charge is not proof that anything is wrong. Lime Shield helps you ask better questions, which is usually all it takes.
+
+THEN IT HELPS YOU ASK
+
+Every finding comes with the exact wording to use, what the billing department is likely to say back, and how to respond. Lime Shield also writes the full review letter for you, listing each charge you flagged, ready to email or print.
+
+If your bill is only a summary, Lime Shield writes the itemized bill request instead, because most errors are invisible until you get the detailed version.
+
+KEEP TRACK
+
+Add findings to a to-do list so you know what you have raised and what is still outstanding. Everything stays on your device, and deleting a scan removes it for good.
+
+LIME SHIELD PRO
+
+The free version includes full analysis. Pro adds unlimited scans and unlimited letters for a monthly subscription. Privacy is identical either way, because there is nothing to change: your bills were never leaving your phone in the first place.
+
+Lime Shield is an informational tool. It does not provide legal, medical, or financial advice, and using it does not create any professional relationship. Reference prices are broad national ballparks, not your plan's negotiated rates. Always check findings against the bill itself.
+
+SUBSCRIPTION DETAILS
+
+Lime Shield Pro
+Length: 1 month, auto-renewing
+Price: 2.99 USD per month
+
+Payment is charged to your Apple Account at confirmation of purchase. The subscription renews automatically unless it is cancelled at least 24 hours before the end of the current period. Your account is charged for renewal within 24 hours before the end of the current period. You can manage or cancel your subscription in your Apple Account settings after purchase.
+
+Privacy Policy: https://dishurise-create.github.io/limeshield/privacy.html
+Terms of Use: https://www.apple.com/legal/internet-services/itunes/dev/stdeula/

@@ -1,0 +1,143 @@
+LIME SHIELD, REPLY TO APP REVIEW
+Guideline 2.1, Information Needed, submission 2beae2a3-d2ed-4ebf-bc0b-4b6716eedd6b
+
+Paste everything below into Reply to App Review, and also paste it into the
+Notes field under App Review Information on the version page, which is what
+Apple asked for at the top of their message.
+
+------------------------------------------------------------------------
+
+Thank you for reviewing Lime Shield. A screen recording is attached, captured
+on a physical iPhone running the current iOS release, beginning at app launch
+and showing the full user flow including the subscription screen. Answers to
+each of your questions follow.
+
+1. SCREEN RECORDING
+
+The attached recording shows, in order: launching the app, tapping Sample on
+the home screen to load the built in example bill, the analysis results, opening
+a finding to see the suggested wording, the generated review letter, the History
+tab, the Learn tab, and finally the Premium tab showing the subscription title,
+its length, its price, and links to the Terms of Use and the privacy policy.
+
+The app has no account registration, no login, and no account deletion flow,
+because it has no accounts. Sign in with Apple is offered as an optional
+convenience only and nothing is required to use any feature. The app has no
+user generated content and no social or sharing component.
+
+2. PURPOSE AND TARGET AUDIENCE
+
+Lime Shield helps ordinary people check their own medical bills for billing
+problems before paying them.
+
+Medical bills in the United States frequently contain errors, and almost nobody
+reviews them line by line because the documents are difficult to read and most
+people do not know what to look for. Lime Shield photographs a bill, reads it
+using Apple's on device Vision framework, checks the charges against a bundled
+set of common billing problems, and tells the user in plain language which items
+are worth questioning and what to say when they call the billing department.
+
+The audience is adults in the United States who have received a medical bill.
+It is not aimed at clinicians, insurers, or any professional user.
+
+The app provides no medical, legal, or financial advice. It analyses billing
+paperwork, not health. Findings are presented as questions worth asking, never
+as accusations, and the app states this in its disclaimers.
+
+3. HOW TO SET UP AND ACCESS THE MAIN FEATURES
+
+No setup, account, or credentials are required. No sample file is needed either.
+
+To review the app without a real medical bill, tap Sample on the home screen.
+This loads a built in example bill and runs the complete analysis, so every
+feature can be reached in a few seconds.
+
+Main features and how to reach them:
+
+Scan. Home screen, the large scan card. Opens the camera to photograph a bill.
+Camera permission is requested at that point.
+
+Sample. Home screen, next to the scan card. Runs the full analysis on a bundled
+example bill, requiring no camera and no document.
+
+Results. Appears automatically after a scan or the sample. Findings are sorted
+into Likely error, Worth checking, and Know your rights.
+
+Finding detail. Tap any finding. Shows what to ask, what the billing department
+is likely to say, and how to respond.
+
+Review letter. Button at the bottom of the results screen. Generates a complete
+letter listing the flagged charges, ready to copy, email, or print.
+
+History. Second tab. Past scans, stored only on the device.
+
+Learn. Third tab. The full list of checks the app performs, plus disclaimers.
+
+Premium. Fourth tab. The subscription screen.
+
+4. EXTERNAL SERVICES, TOOLS, AND PLATFORMS
+
+RevenueCat, used only for subscription management and receipt validation. This
+is the single network dependency in the app.
+
+Nothing else. In particular there is no backend server, no analytics, no crash
+reporting, no advertising SDK, no authentication service, and no AI or machine
+learning service of any kind.
+
+Text recognition uses Apple's Vision framework, which runs entirely on the
+device. The billing rules are plain logic compiled into the app. No bill, no
+photograph, and no recognised text is ever transmitted anywhere. The app can be
+used completely in airplane mode and behaves identically.
+
+5. REGIONAL DIFFERENCES
+
+The app functions identically in every region. There is no region gated content
+and no region specific behaviour in code.
+
+Worth noting for context: the billing rules and the reference prices describe
+United States medical billing practice, and the rights the app explains, such as
+the right to request an itemized bill and the protections of the No Surprises
+Act, are United States law. The app is therefore most useful to users in the
+United States, but it is not restricted or altered anywhere.
+
+6. REGULATED INDUSTRY AND THIRD PARTY MATERIAL
+
+Lime Shield is not a regulated medical device and provides no clinical function.
+It does not diagnose, treat, monitor, or measure anything about a person's body.
+It reads billing paperwork, which is a financial document. This is why the
+primary category is Finance.
+
+The app is not a healthcare provider, an insurer, a billing company, or a
+patient advocacy service, and it does not act on a user's behalf with any third
+party. It produces text that the user may choose to send themselves.
+
+No protected or licensed third party material is included. The reference price
+ranges are broad national ballpark figures, described as such in the app, and
+are not taken from any proprietary database. No provider names, logos, or
+copyrighted billing content are bundled.
+
+7. WHAT USERS CAN BUY, AND HOW TO REACH IT
+
+One auto renewable subscription is offered.
+
+Name: Lime Shield Pro
+Product ID: limeshield_pro_monthly
+Length: 1 month
+Price: 2.99 USD
+Unlocks: unlimited bill scans and unlimited generated letters
+
+How to reach the purchase: tap the Premium tab in the bottom bar at any time.
+No account, login, or prior action is required to get there.
+
+Free users receive 2 scans. After those are used, tapping Scan also opens the
+same Premium screen.
+
+The Premium screen displays the subscription name, its one month length, its
+price, a Restore purchases button, and links to the Terms of Use, which is
+Apple's standard EULA, and to the privacy policy at
+https://dishurise-create.github.io/limeshield/privacy.html
+
+Privacy remains identical on the free and paid tiers, because there is nothing
+to change. Bills were never leaving the device on either tier.
+
+------------------------------------------------------------------------

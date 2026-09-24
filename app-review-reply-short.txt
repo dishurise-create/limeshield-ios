@@ -1,0 +1,29 @@
+Thank you for reviewing Lime Shield. A screen recording is attached, captured on a physical iPhone, beginning at app launch and showing the full user flow including the subscription screen.
+
+1. RECORDING
+Shows: launch, Sample (a built-in example bill), the analysis results, a finding detail, the generated review letter, History, Learn, then the Premium tab displaying the subscription title, length and price, and working links to the Terms of Use and the privacy policy.
+The app has no accounts, so there is no registration, login or account deletion flow. Sign in with Apple is optional and nothing is required to use any feature. There is no user generated content and no social features.
+
+2. PURPOSE AND AUDIENCE
+Lime Shield helps ordinary people check their own medical bills for billing problems before paying them. It photographs a bill, reads it on device, checks the charges against common billing problems, and explains in plain language what is worth questioning and what to say to the billing department. Audience: United States adults who have received a medical bill. It provides no medical, legal or financial advice and analyses billing paperwork, not health.
+
+3. SETUP AND ACCESS
+No account, credentials or sample file are needed. To review the app without a real bill, tap Sample on the home screen: it loads a built in example and runs the full analysis. Scan, also on the home screen, uses the camera. Results appear after either. Tap any finding for the suggested wording. The review letter button sits at the bottom of the results screen. History is the second tab, Learn the third, Premium the fourth.
+
+4. EXTERNAL SERVICES
+RevenueCat, for subscription management and receipt validation. That is the only network dependency. There is no backend server, no analytics, no crash reporting, no advertising SDK, no authentication service and no AI service. Text recognition uses Apple's Vision framework on device. No bill, image or recognised text is ever transmitted. The app behaves identically in airplane mode.
+
+5. REGIONS
+The app functions identically everywhere and has no region gated content. The billing rules and the rights it explains describe United States practice, so it is most useful in the United States, but nothing is restricted or altered by region.
+
+6. REGULATED INDUSTRY
+Lime Shield is not a regulated medical device and has no clinical function. It does not diagnose, treat, monitor or measure anything about a person's body. It reads billing paperwork, which is a financial document, which is why the primary category is Finance. It is not a provider, insurer or billing company and does not act on a user's behalf with any third party. No protected or licensed third party material is included. Reference prices are broad national ballpark figures, described as such in the app.
+
+7. IN-APP PURCHASE
+One auto renewable subscription.
+Name: Lime Shield Pro
+Product ID: limeshield_pro_monthly
+Length: 1 month
+Price: 2.99 USD
+Unlocks: unlimited bill scans and unlimited letters
+To reach it, tap the Premium tab in the bottom bar at any time. No account or prior action is required. Free users receive 2 scans, after which the Scan button also opens the same screen. The Premium screen shows the subscription name, its one month length, its price, a Restore purchases button, and links to Apple's standard EULA and to the privacy policy at https://dishurise-create.github.io/limeshield/privacy.html
