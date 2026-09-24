@@ -53,15 +53,26 @@ extension RulesEngine {
     // MARK: 31-33. Arithmetic
 
     /// 31. Unit price times quantity should equal the line total.
+    ///
+    /// Two figures on a quantity row are only a unit price and a line total when the
+    /// bill has a unit-price column. Without one they could just as well be a charge
+    /// and an insurer payment, and multiplying those would accuse an honest provider,
+    /// so the rule stays silent unless the header says what the columns are.
+    ///
+    /// The parser records the LEFTMOST figure as the line's amount, which on a
+    /// unit-price layout is the unit price. The old check demanded that the larger
+    /// figure equal the recorded amount, which could never be true, so the rule never
+    /// fired. It now only requires the recorded amount to be one of the two figures.
     static func quantityMath(_ bill: Bill) -> [BillIssue] {
-        bill.chargeLines.compactMap { line in
+        guard has(bill, ReferenceData.unitPriceHeaderTerms) else { return [] }
+        return bill.chargeLines.compactMap { line in
             guard let quantity = line.quantity, quantity >= 2,
-                  let total = line.amount else { return nil }
+                  let recorded = line.amount else { return nil }
             let amounts = BillParser.extractAmounts(from: line.raw).filter { $0 > 0 }
             // Need exactly a unit price and a line total to compare.
             guard amounts.count == 2 else { return nil }
-            guard let unit = amounts.min(), let stated = amounts.max(),
-                  abs(stated - total) < 0.01, unit < stated else { return nil }
+            guard let unit = amounts.min(), let stated = amounts.max(), unit < stated,
+                  amounts.contains(where: { abs($0 - recorded) < 0.01 }) else { return nil }
             let expected = unit * Double(quantity)
             guard abs(expected - stated) > 0.01 else { return nil }
             return BillIssue(
@@ -96,14 +107,22 @@ extension RulesEngine {
     }
 
     /// 33. A balance demanded on an account the bill says is settled.
+    ///
+    /// Not arithmetic, so never a "likely error": it rests on wording, and wording like
+    /// "balance must be paid in full within 30 days" is an instruction, not a claim that
+    /// the account is settled. Rows phrased as an instruction are skipped.
     static func alreadyPaidConflict(_ bill: Bill) -> [BillIssue] {
-        guard let due = bill.totals.amountDue, due > 0,
-              has(bill, ReferenceData.paidInFullTerms) else { return [] }
+        guard let due = bill.totals.amountDue, due > 0 else { return [] }
+        let settled = bill.rawText.lowercased().components(separatedBy: "\n").contains { row in
+            ReferenceData.paidInFullTerms.contains { row.contains($0) }
+                && !ReferenceData.paymentInstructionTerms.contains { row.contains($0) }
+        }
+        guard settled else { return [] }
         return [BillIssue(
             ruleID: "already_paid",
-            title: "This bill says paid, but still asks for money",
+            title: "Does this bill say paid but still ask for money?",
             detail: "The statement contains wording about the account being paid or having no balance, yet it asks for \(due.usd). This can happen when an old statement is reissued or a payment wasn't posted.",
-            severity: .likelyError,
+            severity: .worthChecking,
             evidence: ["Amount due: \(due.usd)"],
             estimatedImpact: due,
             action: "Ask whether a payment has already been applied, and request a current statement before paying anything.")]
@@ -289,6 +308,15 @@ extension RulesEngine {
         guard bill.hasLineDetail else { return [] }
         let dated = bill.chargeLines.filter { $0.date != nil }
         guard dated.isEmpty else { return [] }
+        // Hospital statements often print dates as MMDDYY with no separators
+        // ("030126"). The parser deliberately doesn't read those, since a six-digit
+        // number could as easily be a reference number, but when every line may well
+        // carry one, telling the user there are no dates would be wrong.
+        let compactDate = #"\b(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])\d{2}\b"#
+        let compactDated = bill.chargeLines.filter {
+            $0.raw.range(of: compactDate, options: .regularExpression) != nil
+        }
+        guard compactDated.count < bill.chargeLines.count else { return [] }
         return [BillIssue(
             ruleID: "no_service_dates",
             title: "No dates of service on the charges",

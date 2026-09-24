@@ -20,6 +20,7 @@ final class PurchaseManager: ObservableObject {
     static let apiKey = "appl_YunmormUVViYYcUMOdYTEzEAQRU"
     static let entitlementID = "pro"
     private static let freeScanLimit = 2
+    private static let freeLetterLimit = 2
 
     @Published var isPro = false
     @Published var packages: [PurchasePackage] = []
@@ -49,6 +50,22 @@ final class PurchaseManager: ObservableObject {
     /// testing would dead-end at a paywall that can't complete a purchase.
     var canScan: Bool { isPro || !isConfigured || scanCount < Self.freeScanLimit }
     var freeScansRemaining: Int { max(0, Self.freeScanLimit - scanCount) }
+
+    /// Bills a letter has been opened for. Letters have their own allowance, so a
+    /// free user who spends their last scan can still get the letter for that bill.
+    /// Reopening a letter already opened is always free.
+    @Published private(set) var letterBillIDs: Set<String> =
+        Set(UserDefaults.standard.stringArray(forKey: "letterBillIDs") ?? [])
+
+    func canOpenLetter(for billID: UUID) -> Bool {
+        isPro || !isConfigured || letterBillIDs.contains(billID.uuidString)
+            || letterBillIDs.count < Self.freeLetterLimit
+    }
+
+    func recordLetter(for billID: UUID) {
+        guard !isPro, letterBillIDs.insert(billID.uuidString).inserted else { return }
+        UserDefaults.standard.set(Array(letterBillIDs), forKey: "letterBillIDs")
+    }
 
     func recordScan() {
         scanCount += 1
@@ -88,6 +105,15 @@ final class PurchaseManager: ObservableObject {
     }
 
     #if canImport(RevenueCat)
+    private static let unavailableMessage =
+        "The App Store couldn't complete this purchase right now. Please try again in a moment."
+
+    private func buy(_ package: Package) async throws {
+        let result = try await Purchases.shared.purchase(package: package)
+        guard !result.userCancelled else { return }
+        isPro = result.customerInfo.entitlements[Self.entitlementID]?.isActive == true
+    }
+
     /// Turns RevenueCat's package type into the wording Apple wants shown.
     private static func periodName(for type: PackageType) -> String {
         switch type {
@@ -105,9 +131,20 @@ final class PurchaseManager: ObservableObject {
     func purchase(_ package: PurchasePackage) async {
         #if canImport(RevenueCat)
         guard isConfigured else { return }
+        lastError = nil
         do {
-            let result = try await Purchases.shared.purchase(package: package.rcPackage)
-            isPro = result.customerInfo.entitlements[Self.entitlementID]?.isActive == true
+            try await buy(package.rcPackage)
+        } catch ErrorCode.productNotAvailableForPurchaseError {
+            // The product StoreKit handed out earlier can go stale. Fetch it again and
+            // try once more before showing anything.
+            await refresh()
+            guard let fresh = packages.first(where: { $0.id == package.id }) else {
+                lastError = Self.unavailableMessage
+                return
+            }
+            do { try await buy(fresh.rcPackage) }
+            catch ErrorCode.productNotAvailableForPurchaseError { lastError = Self.unavailableMessage }
+            catch { lastError = error.localizedDescription }
         } catch {
             lastError = error.localizedDescription
         }
@@ -117,6 +154,7 @@ final class PurchaseManager: ObservableObject {
     func restore() async {
         #if canImport(RevenueCat)
         guard isConfigured else { return }
+        lastError = nil
         do {
             let info = try await Purchases.shared.restorePurchases()
             isPro = info.entitlements[Self.entitlementID]?.isActive == true

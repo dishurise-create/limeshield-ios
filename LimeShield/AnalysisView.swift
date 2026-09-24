@@ -326,7 +326,12 @@ struct AnalysisView: View {
 
     private var letterButton: some View {
         Button {
-            if purchases.canScan { showLetter = true } else { showPaywall = true }
+            if purchases.canOpenLetter(for: analysis.id) {
+                purchases.recordLetter(for: analysis.id)
+                showLetter = true
+            } else {
+                showPaywall = true
+            }
         } label: {
             Label("Generate review letter", systemImage: "envelope")
                 .font(.headline)

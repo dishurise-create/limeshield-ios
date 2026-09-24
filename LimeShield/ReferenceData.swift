@@ -131,6 +131,10 @@ enum ReferenceData {
     static let testTerms = ["test", "screen", "swab", "pcr", "antigen"]
     static let outOfNetworkTerms = ["out-of-network", "out of network", "non-participating", "nonparticipating"]
     static let estimateTerms = ["good faith estimate", "this is an estimate", "estimated charges", "cost estimate", "pre-service estimate"]
+    /// Column headers that mean a row's two figures are a unit price and a line total.
+    static let unitPriceHeaderTerms = ["unit price", "unit cost", "price per unit", "unit charge", "price each"]
+    /// Wording that tells the patient to pay, rather than saying they already have.
+    static let paymentInstructionTerms = ["be paid in full", "must be paid", "please pay", "if paid in full", "when paid in full"]
     static let paidInFullTerms = ["paid in full", "no balance due", "balance: $0.00", "zero balance"]
     static let dischargeTerms = ["discharge date", "discharged on", "date of discharge"]
     static let selfPayTerms = ["self-pay", "self pay", "uninsured", "no insurance on file"]

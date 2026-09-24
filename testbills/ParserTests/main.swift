@@ -248,6 +248,153 @@ do {
           "\(found.filter { $0.severity == .likelyError }.map(\.ruleID))")
 }
 
+// MARK: Rule coverage: every rule must be able to fire
+
+// One small bill per rule, built so that rule (and ideally only that rule's
+// concern) is present. A rule no bill can trigger is decoration.
+let coverage: [(rule: String, text: String)] = [
+    ("quantity_math", """
+     DATE DESCRIPTION CODE QTY UNIT PRICE AMOUNT
+     08/02/2026 SALINE FLUSH J7050 4 $10.00 $45.00
+     """),
+    ("adjustments_exceed_charges", """
+     08/02/2026 OFFICE VISIT 99213 $180.00
+     Total Charges $180.00
+     Total Adjustments $400.00
+     """),
+    ("already_paid", """
+     Your account has been paid in full. Thank you.
+     Amount Due $120.00
+     """),
+    ("duplicate_facility_fee", """
+     08/02/2026 FACILITY FEE $300.00
+     08/02/2026 HOSPITAL FEE $250.00
+     """),
+    ("facility_fee_office_visit", """
+     08/02/2026 OFFICE VISIT EST 99213 $180.00
+     08/02/2026 FACILITY FEE $300.00
+     """),
+    ("trauma_activation", "08/02/2026 TRAUMA ACTIVATION LEVEL 1 $9,500.00"),
+    ("anesthesia_high", "08/02/2026 ANESTHESIA GENERAL 00790 $4,200.00"),
+    ("telehealth_price", "08/02/2026 VIDEO VISIT 99213 $320.00"),
+    ("covid_test_charge", """
+     08/02/2026 COVID-19 PCR TEST 87635 $150.00
+     Amount Due $150.00
+     """),
+    ("ambulance", "08/02/2026 AMBULANCE TRANSPORT ALS A0427 $1,800.00"),
+    ("out_of_network", """
+     Provider is out of network for your plan.
+     08/02/2026 PHYSICAL THERAPY 97110 $140.00
+     """),
+    ("estimate", """
+     GOOD FAITH ESTIMATE
+     08/02/2026 MRI KNEE 73721 $1,200.00
+     """),
+    ("after_discharge", """
+     Discharge Date 08/03/2026
+     08/02/2026 ROOM AND BOARD $2,000.00
+     08/09/2026 PHARMACY $85.00
+     """),
+    ("self_pay_no_discount", """
+     Self-pay account
+     08/02/2026 X-RAY CHEST 71046 $210.00
+     Amount Due $210.00
+     """),
+    ("newborn_billing", "08/02/2026 NEWBORN NURSERY CARE $1,100.00"),
+    ("due_exceeds_charges", """
+     08/02/2026 OFFICE VISIT 99213 $180.00
+     Total Charges $180.00
+     Amount Due $260.00
+     """),
+    ("two_visits_same_day", """
+     08/02/2026 OFFICE VISIT 99213 $180.00
+     08/02/2026 OFFICE VISIT 99214 $260.00
+     """),
+    ("assistant_surgeon", "08/02/2026 ASSISTANT SURGEON FEE $1,400.00"),
+    ("vaccine_charge", """
+     08/02/2026 FLU SHOT 90686 $45.00
+     Amount Due $45.00
+     """),
+    ("date_anomaly", """
+     Statement Date 08/15/2026
+     08/28/2026 LAB WORK 80053 $120.00
+     """),
+    ("high_intensity", "08/02/2026 ED VISIT LEVEL 5 99285 $2,400.00"),
+    ("surprise_billing", """
+     EMERGENCY DEPARTMENT
+     Physician is out-of-network
+     08/02/2026 ED VISIT 99284 $980.00
+     """),
+]
+for (rule, text) in coverage {
+    let found = rules(BillParser.parse(text: text))
+    check("Coverage: \(rule) fires", found.contains(rule), "got \(found.sorted())")
+}
+
+// MARK: Rules that must stay silent on honest bills
+
+do {
+    // "Must be paid in full" is an instruction, not a claim the account is settled.
+    let bill = BillParser.parse(text: """
+    08/02/2026 OFFICE VISIT 99213 $180.00
+    Balance must be paid in full within 30 days.
+    Amount Due $180.00
+    """)
+    check("already_paid silent on payment instruction", !rules(bill).contains("already_paid"), "\(rules(bill))")
+}
+do {
+    // Two figures on a quantity row with no unit-price column: charge and insurer
+    // payment, not unit price and total. Multiplying them would be an accusation.
+    let bill = BillParser.parse(text: """
+    DATE DESCRIPTION CODE QTY CHARGE INS PAID
+    08/02/2026 PHYSICAL THERAPY 97110 3 $300.00 $80.00
+    """)
+    check("quantity_math silent without unit-price column", !rules(bill).contains("quantity_math"), "\(rules(bill))")
+}
+do {
+    // Correct unit-price arithmetic.
+    let bill = BillParser.parse(text: """
+    DATE DESCRIPTION CODE QTY UNIT PRICE AMOUNT
+    08/02/2026 SALINE FLUSH J7050 4 $10.00 $40.00
+    """)
+    check("quantity_math silent when it multiplies out", !rules(bill).contains("quantity_math"), "\(rules(bill))")
+}
+do {
+    // Only arithmetic may be red.
+    let arithmetic: Set<String> = ["math", "math_statement", "due_exceeds_charges", "quantity_math"]
+    var red = Set<String>()
+    for (_, text) in coverage {
+        for issue in RulesEngine.analyze(BillParser.parse(text: text)) where issue.severity == .likelyError {
+            red.insert(issue.ruleID)
+        }
+    }
+    check("Only arithmetic rules are red", red.isSubset(of: arithmetic), "non-arithmetic red: \(red.subtracting(arithmetic))")
+}
+
+do {
+    // UB-04 style lines: revenue code, description, MMDDYY date, CPT, amount.
+    // From a real scan (Meridian). Dates are present, and a coded line isn't vague.
+    let bill = BillParser.parse(text: """
+    0250 PHARMACY GENERAL 030126 $1,284.60
+    0270 MED SURG SUPPLIES 030126 $938.75
+    0308 LABORATORY GENERAL 030126 80053 $266.80
+    Total Charges $2,490.15
+    """)
+    let found = RulesEngine.analyze(bill)
+    check("Compact dates: no 'no service dates'", !found.contains { $0.ruleID == "no_service_dates" },
+          "\(found.map(\.ruleID))")
+    check("Coded line not vague", !found.contains { $0.ruleID == "vague" && $0.evidence.joined().contains("80053") })
+    check("Uncoded general line still vague", found.contains { $0.ruleID == "vague" && $0.evidence.joined().contains("PHARMACY") })
+}
+do {
+    let bill = BillParser.parse(text: """
+    PHARMACY $1,284.60
+    SUPPLIES $938.75
+    LAB $266.80
+    """)
+    check("Truly undated lines still flagged", rules(bill).contains("no_service_dates"), "\(rules(bill))")
+}
+
 // MARK: Dates and quantities
 
 do {

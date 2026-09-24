@@ -200,6 +200,10 @@ enum RulesEngine {
     private static func vagueCharges(_ bill: Bill) -> [BillIssue] {
         bill.chargeLines.compactMap { line in
             guard let amount = line.amount, amount >= ReferenceData.vagueThreshold else { return nil }
+            // A line with its own CPT or HCPCS code already says what it is, whatever
+            // its description, and the letter would otherwise ask for codes that are
+            // printed right there on the bill.
+            guard line.code == nil else { return nil }
             let d = line.desc.lowercased()
             guard ReferenceData.vagueTerms.contains(where: { d.contains($0) }) else { return nil }
             return BillIssue(

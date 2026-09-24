@@ -160,6 +160,13 @@ struct BillAnalysis: Codable, Identifiable, Hashable {
     /// Per-finding to-do state, keyed by BillIssue.stateKey so it survives re-analysis.
     var issueStates: [String: FindingState]?
 
+    /// The built-in demo bill. Scans saved before this flag existed are recognised
+    /// by their text, which is identical to the sample's.
+    var isSample: Bool {
+        !(editedByUser ?? false) && bill.rawText == Self.sampleRawText
+    }
+    private static let sampleRawText = BillParser.parse(text: SampleBill.text).rawText
+
     // MARK: To-do state
 
     func state(for issue: BillIssue) -> FindingState? {
@@ -256,7 +263,16 @@ final class AnalysisStore: ObservableObject {
     func load() {
         guard let data = try? Data(contentsOf: fileURL),
               let decoded = try? JSONDecoder().decode([BillAnalysis].self, from: data) else { return }
-        analyses = decoded
+        // Saved findings are a snapshot of the rules at scan time. Re-run today's
+        // rules on each saved bill, so a finding a later version withdrew or softened
+        // (a red "error" that was really a refund) doesn't live on in History. The
+        // bill itself is kept as saved, so the user's own corrections survive, and
+        // to-do state is keyed by stateKey, so that survives too.
+        analyses = decoded.map { saved in
+            var analysis = saved
+            analysis.issues = RulesEngine.analyze(saved.bill)
+            return analysis
+        }
     }
 
     func add(_ analysis: BillAnalysis) {
@@ -284,8 +300,14 @@ final class AnalysisStore: ObservableObject {
     // MARK: Totals across every scan (v8, used by the home screen)
 
     /// Every dollar Lime Shield has put a question mark against, all bills combined.
+    /// The built-in sample bill is a demo, not the user's money, so it stays out of
+    /// the home screen totals.
+    private var realAnalyses: [BillAnalysis] {
+        analyses.filter { !$0.isSample }
+    }
+
     var totalFlagged: Double {
-        analyses.reduce(0) { $0 + $1.estimatedImpact }
+        realAnalyses.reduce(0) { $0 + $1.estimatedImpact }
     }
 
     /// Findings still sitting on a to-do list somewhere.
@@ -293,7 +315,7 @@ final class AnalysisStore: ObservableObject {
         analyses.reduce(0) { $0 + $1.todoIssues.count }
     }
 
-    var billCount: Int { analyses.count }
+    var billCount: Int { realAnalyses.count }
 
     private func save() {
         guard let data = try? JSONEncoder().encode(analyses) else { return }

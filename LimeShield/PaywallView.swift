@@ -71,7 +71,15 @@ struct PremiumBody: View {
                 .padding(.vertical, 8)
         } else if purchases.isConfigured {
             if purchases.packages.isEmpty {
-                ProgressView().task { await purchases.refresh() }
+                if purchases.lastError == nil {
+                    ProgressView().task { await purchases.refresh() }
+                } else {
+                    // Loading failed. Offer a way out instead of spinning forever.
+                    Button("Try again") {
+                        purchases.lastError = nil
+                    }
+                    .buttonStyle(.bordered)
+                }
             }
             ForEach(purchases.packages) { package in
                 Button {
