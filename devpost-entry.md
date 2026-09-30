@@ -94,6 +94,6 @@ Swift, SwiftUI, Vision, VisionKit, RevenueCat, Xcode, Python (for the verificati
 
 ## Links
 
-App Store: [add once approved]
+App Store: https://apps.apple.com/us/app/lime-shield/id6811397021
 Privacy policy: https://dishurise-create.github.io/limeshield/privacy.html
 Support: https://dishurise-create.github.io/limeshield/support.html
