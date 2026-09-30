@@ -97,3 +97,10 @@ Swift, SwiftUI, Vision, VisionKit, RevenueCat, Xcode, Python (for generating tes
 App Store: https://apps.apple.com/us/app/lime-shield/id6811397021
 Privacy policy: https://dishurise-create.github.io/limeshield/privacy.html
 Support: https://dishurise-create.github.io/limeshield/support.html
+
+## Judges' access to Pro
+
+Open this link on your iPhone for one free month of Lime Shield Pro. It does not auto-renew, so you will not be charged:
+https://apps.apple.com/redeem?ctx=offercodes&id=6811397021&code=LIMESHIELDJUDGE
+
+Then open Lime Shield. If Pro does not show straight away, tap Restore purchases on the Premium tab. Without the code, the Sample bill on the home screen, 2 real scans and 2 review letters are free.
