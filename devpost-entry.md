@@ -54,7 +54,7 @@ Four separate causes. Payment and adjustment lines were being counted as charges
 
 I rewrote the parser. Summary rows are now identified and excluded before anything else. Non-charge keywords are matched with word boundaries and only against the text before the first amount, so a Coinsurance column heading cannot disqualify the charge next to it. Rows with several money columns mark the bill as ambiguous, and every total-dependent rule goes quiet when totals are not reliable.
 
-Then I did the thing that actually mattered: I ported the classification logic to Python and built a fixture set, so I could verify the fix instead of believing in it. That harness caught two regressions I introduced while fixing the original bug. One dropped a legitimate 54 dollar charge. The other dropped a line reading INTEREST ON UNPAID BALANCE, because unpaid contains paid.
+Then I did the thing that actually mattered: I ported the classification logic to Python and built a fixture set, so I could verify the fix instead of believing in it. That harness caught two regressions I introduced while fixing the original bug. One dropped a legitimate 54 dollar charge. The other dropped a line reading INTEREST ON UNPAID BALANCE, because unpaid contains paid. Later I replaced the Python port with tests that compile the app's real Swift parser and rules, so the tests can never drift from what ships. Every one of the 46 rules now has a test bill that triggers it, and writing those bills turned up one rule that could never have fired at all.
 
 The principle I ended up with: a rule that stays silent beats a rule that accuses an honest provider. Someone who walks into a billing office quoting a false error from my app is worse off than someone who never opened it.
 
@@ -80,9 +80,9 @@ That in a domain where being wrong costs a user something real, restraint is a f
 
 Reference prices with citations, so the price comparison rule can show its source instead of a range.
 
-The sixteen rules that have never fired in testing. Each one needs a bill that triggers it, or it is decoration.
+A refund request letter. When a statement shows the account is in credit, the app tells you, but it cannot yet write the letter asking for the money back.
 
-A letter allowance separate from the scan allowance, which is a rough edge in the free tier.
+Reading the compact dates hospitals print, like 030126 for March 1, without mistaking a reference number for a date.
 
 And a proper answer to the question underneath all of this: how many of these findings, when people actually raise them, turn into money back. That takes real users, which is what comes after shipping.
 
@@ -90,7 +90,7 @@ And a proper answer to the question underneath all of this: how many of these fi
 
 ## Built with
 
-Swift, SwiftUI, Vision, VisionKit, RevenueCat, Xcode, Python (for the verification harness)
+Swift, SwiftUI, Vision, VisionKit, RevenueCat, Xcode, Python (for generating test bills)
 
 ## Links
 
