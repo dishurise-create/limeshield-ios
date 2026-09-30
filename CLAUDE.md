@@ -80,8 +80,12 @@ chat. Compiling the real sources means the tests cannot drift from the app.
 ## Shipping state
 
 - Bundle `com.limeshield.LimeShield`, Apple ID 6811397021.
-- Version 1.0. Build 2 was rejected. Build 3 uploaded and resubmitted
-  2026-09-24 with a reply to App Review (`app-review-reply-2.1b.txt`).
+- LIVE: version 1.0 (build 3) released on the App Store 2026-09-30,
+  https://apps.apple.com/us/app/lime-shield/id6811397021
+  Build 2 was rejected; build 3 was resubmitted 2026-09-24 with a reply to
+  App Review (`app-review-reply-2.1b.txt`).
+- Shipaton deadline: 2026-09-30 23:45 PT. The app had to be live by then.
+  Winners announced 2026-10-22.
 - Checked 2026-09-24 and all fine: Paid Apps Agreement, banking and W-9
   Active; Pro Monthly Ready for Review, all regions; RevenueCat IAP key valid;
   `pro` entitlement attached to the App Store product. So the 2.1(b)
