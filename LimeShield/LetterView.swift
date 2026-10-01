@@ -18,7 +18,7 @@ struct LetterView: View {
                     .font(.callout.monospaced())
                     .padding(.horizontal)
             }
-            .navigationTitle("Review letter")
+            .navigationTitle((analysis.letterKind ?? .review).screenTitle)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {

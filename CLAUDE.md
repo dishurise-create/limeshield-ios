@@ -88,7 +88,7 @@ chat. Compiling the real sources means the tests cannot drift from the app.
   Build 2 was rejected; build 3 was resubmitted 2026-09-24 with a reply to
   App Review (`app-review-reply-2.1b.txt`).
 - Next: version 1.0.1 (build 4), not yet uploaded. Adds free-trial wording to
-  the paywall. The 1-week introductory offer must be created in App Store
+  the paywall and the refund request letter. The 1-week introductory offer must be created in App Store
   Connect to start when 1.0.1 goes live, not before: the live 1.0 paywall
   doesn't mention trials.
 - Shipaton deadline: 2026-09-30 23:45 PT. The app had to be live by then.
@@ -116,8 +116,15 @@ chat. Compiling the real sources means the tests cannot drift from the app.
 - MMDDYY dates ("030126") on hospital statements aren't parsed. The
   no-service-dates rule stays silent for them instead. Parsing them safely
   needs a way to tell them from reference numbers.
-- A credit-balance refund is "know your rights", so it can't go in a review
-  letter. A refund-request letter would be useful.
+
+## Letters
+
+`BillAnalysis.letterKind` picks the letter: `itemizedRequest` (unitemized
+bill), `review` (anything actionable), `refund` (only a credit balance, and
+the user hasn't dismissed it). A review letter on a bill that is also in
+credit gets an extra paragraph asking for the refund. Every letter asks and
+never accuses; the refund letter says "if this is correct". The generator is
+compiled into the parser tests.
 
 ## Resolved 2026-09-24 (don't reintroduce)
 

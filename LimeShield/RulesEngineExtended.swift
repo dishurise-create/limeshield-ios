@@ -83,7 +83,7 @@ extension RulesEngine {
         return [BillIssue(
             ruleID: "credit_balance",
             title: "You may be owed a refund",
-            detail: "The balance on this statement is \(abs(due).usd) in your favour. Credit balances often sit unrefunded until someone asks for them.",
+            detail: "The balance on this statement is \(abs(due).usd) in your favor. Credit balances often sit unrefunded until someone asks for them. Lime Shield can write the refund request for you.",
             severity: .knowYourRights,
             evidence: ["Balance: \(due.usd)"],
             estimatedImpact: abs(due),

@@ -395,6 +395,87 @@ do {
     check("Truly undated lines still flagged", rules(bill).contains("no_service_dates"), "\(rules(bill))")
 }
 
+// MARK: Letters
+
+func analysis(_ text: String) -> BillAnalysis {
+    let bill = BillParser.parse(text: text)
+    return BillAnalysis(title: "Test", bill: bill, issues: RulesEngine.analyze(bill))
+}
+let graniteText = """
+GRANITE STATE DERMATOLOGY
+PATIENT STATEMENT
+Account Number GS-660231
+Statement Date 09/01/2026
+08/04/26 OFFICE VISIT LEVEL 3 99213 1 $185.00
+08/04/26 SKIN BIOPSY SINGLE LESION 11102 1 $225.00
+08/20/26 PATIENT PAYMENT -$500.00
+Total Charges $410.00
+Payments Received -$500.00
+Credit Balance -$90.00
+"""
+do {
+    // Overpaid statement, nothing to dispute: refund request.
+    var a = analysis(graniteText)
+    check("Letter: credit-only bill gets a refund request", a.letterKind == .refund, "\(String(describing: a.letterKind))")
+    check("Letter: refund amount read", a.refundableCredit == 90, "\(String(describing: a.refundableCredit))")
+    let letter = DisputeLetterGenerator.letter(for: a, patientName: "Pat Example")
+    check("Refund letter: asks for the refund", letter.contains("Request for refund of credit balance"), letter)
+    check("Refund letter: states the amount", letter.contains("$90"), letter)
+    check("Refund letter: hedged with 'If this is correct'", letter.contains("If this is correct"))
+    check("Refund letter: signed", letter.contains("Pat Example"))
+    let lowered = letter.lowercased()
+    check("Refund letter: never accuses",
+          !["error", "fraud", "overcharg", "mistake", "illegal"].contains { lowered.contains($0) }, letter)
+
+    // Marking the credit "not an issue" withdraws the letter.
+    if let credit = a.issues.first(where: { $0.ruleID == "credit_balance" }) {
+        a.setState(.dismissed, for: credit)
+    }
+    check("Letter: dismissed credit means no letter", a.letterKind == nil, "\(String(describing: a.letterKind))")
+}
+do {
+    let a = analysis(SampleBill.text)
+    check("Letter: sample bill gets the review letter", a.letterKind == .review)
+    let letter = DisputeLetterGenerator.letter(for: a, patientName: "")
+    check("Review letter: unchanged without a credit", !letter.contains("credit balance"), letter)
+    check("Review letter: placeholder name", letter.contains("[Your Name]"))
+}
+do {
+    // Items to verify AND a credit: review letter that also asks for the credit.
+    let a = analysis("""
+    VALLEY CLINIC
+    08/02/2026 ECG ROUTINE 12 LEADS 93000 $150.00
+    08/02/2026 ECG ROUTINE 12 LEADS 93000 $150.00
+    08/02/2026 OFFICE VISIT 99213 $180.00
+    08/20/2026 PATIENT PAYMENT -$600.00
+    Total Charges $480.00
+    Credit Balance -$120.00
+    """)
+    check("Letter: findings plus credit is still a review letter", a.letterKind == .review, "\(a.issues.map(\.ruleID))")
+    let letter = DisputeLetterGenerator.letter(for: a, patientName: "")
+    check("Review letter: mentions the credit too", letter.contains("credit balance of $120"), letter)
+}
+do {
+    let a = analysis("""
+    REGIONAL MEDICAL CENTER
+    Amount Due $2,400.00
+    """)
+    check("Letter: unitemized bill gets the itemized request", a.letterKind == .itemizedRequest, "\(a.issues.map(\.ruleID))")
+    check("Itemized letter text", DisputeLetterGenerator.letter(for: a, patientName: "").contains("Request for itemized bill"))
+}
+do {
+    let a = analysis("""
+    MERCY HOSPITAL
+    08/02/2026 X-RAY CHEST 2 VIEWS 71046 $210.00
+    08/02/2026 CBC WITH DIFF 85025 $60.00
+    08/02/2026 OFFICE VISIT EST 99213 $180.00
+    Total Charges $450.00
+    Insurance Payment -$400.00
+    Amount Due $50.00
+    """)
+    check("Letter: clean bill offers no letter", a.letterKind == nil, "\(a.issues.map(\.ruleID))")
+}
+
 // MARK: Dates and quantities
 
 do {

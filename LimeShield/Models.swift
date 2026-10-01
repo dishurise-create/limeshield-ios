@@ -147,6 +147,28 @@ enum FindingState: String, Codable {
     }
 }
 
+/// The letters Lime Shield can write for a bill.
+enum LetterKind {
+    case itemizedRequest
+    case review
+    case refund
+
+    var buttonTitle: String {
+        switch self {
+        case .itemizedRequest: return "Generate itemized bill request"
+        case .review:          return "Generate review letter"
+        case .refund:          return "Generate refund request"
+        }
+    }
+    var screenTitle: String {
+        switch self {
+        case .itemizedRequest: return "Itemized bill request"
+        case .review:          return "Review letter"
+        case .refund:          return "Refund request"
+        }
+    }
+}
+
 // MARK: - Saved analysis
 
 struct BillAnalysis: Codable, Identifiable, Hashable {
@@ -224,11 +246,28 @@ struct BillAnalysis: Codable, Identifiable, Hashable {
         issues.filter { $0.severity == .knowYourRights }
     }
 
-    /// v6.2: only offer a letter when there is something to put in it. An unitemized
-    /// bill has its own letter (requesting the itemization), so it counts too.
-    var canGenerateLetter: Bool {
-        !actionableIssues.isEmpty || issues.contains { $0.ruleID == "not_itemized" }
+    /// Which letter this bill calls for, if any. An unitemized bill gets a request
+    /// for the itemization. Findings worth raising get the review letter. A statement
+    /// whose only news is a credit balance gets a refund request, which the review
+    /// letter can't carry because a refund isn't something to dispute.
+    var letterKind: LetterKind? {
+        if issues.contains(where: { $0.ruleID == "not_itemized" }) { return .itemizedRequest }
+        if !actionableIssues.isEmpty { return .review }
+        if refundableCredit != nil { return .refund }
+        return nil
     }
+
+    /// The credit balance the statement shows in the patient's favour, unless the
+    /// user has marked that finding "not an issue".
+    var refundableCredit: Double? {
+        guard let issue = issues.first(where: { $0.ruleID == "credit_balance" }),
+              state(for: issue) != .dismissed,
+              let due = bill.totals.amountDue, due < 0 else { return nil }
+        return abs(due)
+    }
+
+    /// v6.2: only offer a letter when there is something to put in it.
+    var canGenerateLetter: Bool { letterKind != nil }
 
     /// v6 honesty fix: a math mismatch is usually CAUSED by the line-level findings
     /// (a duplicated $150 charge makes the total $150 off), so adding both double-counts

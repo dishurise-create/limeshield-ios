@@ -333,7 +333,8 @@ struct AnalysisView: View {
                 showPaywall = true
             }
         } label: {
-            Label("Generate review letter", systemImage: "envelope")
+            Label(analysis.letterKind?.buttonTitle ?? LetterKind.review.buttonTitle,
+                  systemImage: "envelope")
                 .font(.headline)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 6)

@@ -8,5 +8,6 @@ OUT="${TMPDIR:-/tmp}/limeshield-parser-tests"
 xcrun swiftc -O -o "$OUT" \
   testbills/ParserTests/main.swift \
   $SRC/BillParser.swift $SRC/Models.swift $SRC/ReferenceData.swift \
-  $SRC/RulesEngine.swift $SRC/RulesEngineExtended.swift $SRC/RulesEngineMore.swift
+  $SRC/RulesEngine.swift $SRC/RulesEngineExtended.swift $SRC/RulesEngineMore.swift \
+  $SRC/DisputeLetterGenerator.swift
 "$OUT"
