@@ -91,9 +91,16 @@ struct PremiumBody: View {
                     }
                 } label: {
                     VStack(spacing: 2) {
-                        Text(package.title.isEmpty ? "Subscribe" : package.title)
-                            .font(.headline)
-                        Text(package.priceWithPeriod).font(.caption)
+                        if let trial = package.freeTrial {
+                            // Apple requires the trial length and the price that
+                            // follows it to be stated together, on the button itself.
+                            Text("Try free for \(trial)").font(.headline)
+                            Text("then \(package.priceWithPeriod)").font(.caption)
+                        } else {
+                            Text(package.title.isEmpty ? "Subscribe" : package.title)
+                                .font(.headline)
+                            Text(package.priceWithPeriod).font(.caption)
+                        }
                     }
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 4)
@@ -143,13 +150,18 @@ struct PremiumBody: View {
     }
 
     private var renewalText: String {
-        let priced = purchases.packages.first.map {
-            "Lime Shield Pro is \($0.priceWithPeriod). "
-        } ?? ""
-        return priced
-            + "Payment is charged to your Apple Account at confirmation of purchase. "
-            + "The subscription renews automatically unless it is cancelled at least 24 hours "
+        let renewal = "The subscription renews automatically unless it is cancelled at least 24 hours "
             + "before the end of the current period. Manage or cancel anytime in Settings."
+        guard let package = purchases.packages.first else {
+            return "Payment is charged to your Apple Account at confirmation of purchase. " + renewal
+        }
+        if let trial = package.freeTrial {
+            return "Lime Shield Pro is free for \(trial), then \(package.priceWithPeriod). "
+                + "Payment is charged to your Apple Account when the free trial ends, unless you "
+                + "cancel at least 24 hours before then. " + renewal
+        }
+        return "Lime Shield Pro is \(package.priceWithPeriod). "
+            + "Payment is charged to your Apple Account at confirmation of purchase. " + renewal
     }
 
     private func benefit(_ icon: String, _ title: String) -> some View {

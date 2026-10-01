@@ -35,6 +35,10 @@ final class PurchaseManager: ObservableObject {
         let priceString: String
         /// Billing period in plain words, e.g. "month". Empty when unknown.
         let period: String
+        /// Length of the free trial in plain words, e.g. "1 week". Nil when the
+        /// product has no free trial or this customer isn't eligible for it, so the
+        /// paywall never promises a trial Apple won't give.
+        var freeTrial: String? = nil
         #if canImport(RevenueCat)
         let rcPackage: Package
         #endif
@@ -91,13 +95,18 @@ final class PurchaseManager: ObservableObject {
             let info = try await Purchases.shared.customerInfo()
             isPro = info.entitlements[Self.entitlementID]?.isActive == true
             let offerings = try await Purchases.shared.offerings()
-            packages = (offerings.current?.availablePackages ?? []).map {
-                PurchasePackage(id: $0.identifier,
-                                title: $0.storeProduct.localizedTitle,
-                                priceString: $0.storeProduct.localizedPriceString,
-                                period: Self.periodName(for: $0.packageType),
-                                rcPackage: $0)
+            var loaded: [PurchasePackage] = []
+            for package in offerings.current?.availablePackages ?? [] {
+                let product = package.storeProduct
+                loaded.append(PurchasePackage(
+                    id: package.identifier,
+                    title: product.localizedTitle,
+                    priceString: product.localizedPriceString,
+                    period: Self.periodName(for: package.packageType),
+                    freeTrial: await Self.freeTrialLength(for: product),
+                    rcPackage: package))
             }
+            packages = loaded
         } catch {
             lastError = error.localizedDescription
         }
@@ -107,6 +116,38 @@ final class PurchaseManager: ObservableObject {
     #if canImport(RevenueCat)
     private static let unavailableMessage =
         "The App Store couldn't complete this purchase right now. Please try again in a moment."
+
+    /// The free trial's length in plain words, only when Apple would actually grant
+    /// it: the product has a free-trial introductory offer AND this customer is
+    /// eligible (Apple gives one introductory offer per subscription group).
+    private static func freeTrialLength(for product: StoreProduct) async -> String? {
+        #if DEBUG
+        // Launch with -previewFreeTrial to see the trial paywall before the offer
+        // exists in App Store Connect. Never compiled into release builds.
+        if ProcessInfo.processInfo.arguments.contains("-previewFreeTrial") { return "1 week" }
+        #endif
+        guard let offer = product.introductoryDiscount, offer.paymentMode == .freeTrial,
+              await Purchases.shared.checkTrialOrIntroDiscountEligibility(product: product) == .eligible
+        else { return nil }
+        return trialWords(value: offer.subscriptionPeriod.value, unit: offer.subscriptionPeriod.unit)
+    }
+
+    /// "1 week", "3 days", "2 months". StoreKit reports a week-long trial as either
+    /// 1 week or 7 days depending on the OS version, so whole weeks are normalised.
+    static func trialWords(value: Int, unit: SubscriptionPeriod.Unit) -> String {
+        var value = value
+        var word: String
+        switch unit {
+        case .day:
+            if value % 7 == 0 { value /= 7; word = "week" } else { word = "day" }
+        case .week:  word = "week"
+        case .month: word = "month"
+        case .year:  word = "year"
+        @unknown default: word = "day"
+        }
+        if value != 1 { word += "s" }
+        return "\(value) \(word)"
+    }
 
     private func buy(_ package: Package) async throws {
         let result = try await Purchases.shared.purchase(package: package)

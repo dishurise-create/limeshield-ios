@@ -25,7 +25,10 @@ The pipeline is: `OCRService` (Vision) → `BillParser` → `RulesEngine` → vi
   46 checks across 8 categories. Plain Swift, no model, no network.
 - `Models.swift` — `Bill`, `Issue`, `DocumentKind`, `AnalysisStore`.
 - `PurchaseManager.swift` — RevenueCat. Entitlement id `pro`, product
-  `limeshield_pro_monthly`, 2.99/month. Free tier is 2 scans.
+  `limeshield_pro_monthly`, 2.99/month. Free tier is 2 scans. The paywall
+  shows a free trial only when the product has one AND the customer is
+  eligible (`freeTrial`). Debug builds: launch with `-previewFreeTrial` to see
+  the trial paywall.
 
 ## Parser rules, do not regress these
 
@@ -84,6 +87,10 @@ chat. Compiling the real sources means the tests cannot drift from the app.
   https://apps.apple.com/us/app/lime-shield/id6811397021
   Build 2 was rejected; build 3 was resubmitted 2026-09-24 with a reply to
   App Review (`app-review-reply-2.1b.txt`).
+- Next: version 1.0.1 (build 4), not yet uploaded. Adds free-trial wording to
+  the paywall. The 1-week introductory offer must be created in App Store
+  Connect to start when 1.0.1 goes live, not before: the live 1.0 paywall
+  doesn't mention trials.
 - Shipaton deadline: 2026-09-30 23:45 PT. The app had to be live by then.
   Winners announced 2026-10-22. Entered in Next Gen (the only category open
   to minors): needs the public repo, a student email and parental consent.
