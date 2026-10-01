@@ -27,7 +27,10 @@ final class PurchaseManager: ObservableObject {
     @Published var isConfigured = false
     @Published var lastError: String?
     /// Published so the "free scans remaining" label refreshes immediately.
-    @Published private(set) var scanCount: Int = UserDefaults.standard.integer(forKey: "scanCount")
+    /// The larger of the app's own count and the Keychain's, so the count survives a
+    /// reinstall (Keychain) and carries over from versions that only used UserDefaults.
+    @Published private(set) var scanCount: Int = max(
+        UserDefaults.standard.integer(forKey: "scanCount"), FreeTierStore.value(.scans))
 
     struct PurchasePackage: Identifiable {
         let id: String
@@ -61,24 +64,40 @@ final class PurchaseManager: ObservableObject {
     @Published private(set) var letterBillIDs: Set<String> =
         Set(UserDefaults.standard.stringArray(forKey: "letterBillIDs") ?? [])
 
+    /// How many free letters have been used. Kept separately from `letterBillIDs`
+    /// because those ids die with the scans when the app is deleted, and the count
+    /// has to survive that.
+    private var lettersUsed: Int {
+        max(letterBillIDs.count, FreeTierStore.value(.letters))
+    }
+
     func canOpenLetter(for billID: UUID) -> Bool {
         isPro || !isConfigured || letterBillIDs.contains(billID.uuidString)
-            || letterBillIDs.count < Self.freeLetterLimit
+            || lettersUsed < Self.freeLetterLimit
     }
 
     func recordLetter(for billID: UUID) {
-        guard !isPro, letterBillIDs.insert(billID.uuidString).inserted else { return }
+        guard !isPro, !letterBillIDs.contains(billID.uuidString) else { return }
+        let used = lettersUsed + 1
+        letterBillIDs.insert(billID.uuidString)
         UserDefaults.standard.set(Array(letterBillIDs), forKey: "letterBillIDs")
+        FreeTierStore.set(used, for: .letters)
     }
 
     func recordScan() {
         scanCount += 1
         UserDefaults.standard.set(scanCount, forKey: "scanCount")
+        FreeTierStore.set(scanCount, for: .scans)
     }
 
     // MARK: Lifecycle
 
     func configure() {
+        // Carry counts from before the Keychain was used into it, once.
+        if FreeTierStore.value(.scans) < scanCount { FreeTierStore.set(scanCount, for: .scans) }
+        if FreeTierStore.value(.letters) < letterBillIDs.count {
+            FreeTierStore.set(letterBillIDs.count, for: .letters)
+        }
         #if canImport(RevenueCat)
         guard Self.apiKey.hasPrefix("appl_") else { return }  // placeholder guard
         Purchases.logLevel = .warn

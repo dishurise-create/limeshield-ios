@@ -88,7 +88,8 @@ chat. Compiling the real sources means the tests cannot drift from the app.
   Build 2 was rejected; build 3 was resubmitted 2026-09-24 with a reply to
   App Review (`app-review-reply-2.1b.txt`).
 - Next: version 1.0.1 (build 4), not yet uploaded. Adds free-trial wording to
-  the paywall and the refund request letter. The 1-week introductory offer must be created in App Store
+  the paywall, the refund request letter, and free-tier counts that survive
+  a reinstall. The 1-week introductory offer must be created in App Store
   Connect to start when 1.0.1 goes live, not before: the live 1.0 paywall
   doesn't mention trials.
 - Shipaton deadline: 2026-09-30 23:45 PT. The app had to be live by then.
@@ -116,6 +117,13 @@ chat. Compiling the real sources means the tests cannot drift from the app.
 - MMDDYY dates ("030126") on hospital statements aren't parsed. The
   no-service-dates rule stays silent for them instead. Parsing them safely
   needs a way to tell them from reference numbers.
+
+## Free tier
+
+2 free scans and 2 free letters. The counts live in the Keychain
+(`FreeTierStore`) as well as UserDefaults, and the larger wins, so deleting
+and reinstalling doesn't hand out fresh free scans. Device-only, never synced.
+Don't move the counts back to UserDefaults alone.
 
 ## Letters
 
