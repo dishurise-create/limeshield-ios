@@ -85,7 +85,12 @@ chat. Compiling the real sources means the tests cannot drift from the app.
   Build 2 was rejected; build 3 was resubmitted 2026-09-24 with a reply to
   App Review (`app-review-reply-2.1b.txt`).
 - Shipaton deadline: 2026-09-30 23:45 PT. The app had to be live by then.
-  Winners announced 2026-10-22.
+  Winners announced 2026-10-22. Entered in Next Gen (the only category open
+  to minors): needs the public repo, a student email and parental consent.
+- Public repo (MIT): https://github.com/dishurise-create/limeshield-ios.
+  Devpost project: https://devpost.com/software/lime-shield
+- Judges' free month: offer code LIMESHIELDJUDGE (500 uses, no auto-renew,
+  expires 2026-11-30).
 - Checked 2026-09-24 and all fine: Paid Apps Agreement, banking and W-9
   Active; Pro Monthly Ready for Review, all regions; RevenueCat IAP key valid;
   `pro` entitlement attached to the App Store product. So the 2.1(b)
