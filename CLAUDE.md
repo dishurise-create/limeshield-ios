@@ -89,13 +89,14 @@ chat. Compiling the real sources means the tests cannot drift from the app.
   App Review (`app-review-reply-2.1b.txt`).
 - Next: version 1.0.1 (build 4), not yet uploaded. Adds free-trial wording to
   the paywall, the refund request letter, and free-tier counts that survive
-  a reinstall. The 1-week introductory offer must be created in App Store
-  Connect to start when 1.0.1 goes live, not before: the live 1.0 paywall
-  doesn't mention trials.
+  a reinstall. The 1-week introductory offer was turned on early, on
+  2026-10-07.
 - App Store featuring nomination submitted 2026-10-08 (App Enhancements) for
   1.0.1 with a publish date of 2026-10-30. 1.0.1 must be released that day
-  (submit for review with manual release, then click Release on Oct 30), and
-  the 1-week introductory offer turned on right after.
+  (submit for review with manual release, then click Release on Oct 30).
+- The 1-week free trial is LIVE (introductory offer on Pro Monthly, confirmed
+  2026-10-08). Posts and outreach may mention it. The live 1.0 paywall text
+  doesn't mention it yet; 1.0.1 fixes that.
 - Shipaton deadline: 2026-09-30 23:45 PT. The app had to be live by then.
   Winners announced 2026-10-22. Entered in Next Gen (the only category open
   to minors): needs the public repo, a student email and parental consent.
