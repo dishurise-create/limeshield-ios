@@ -1,7 +1,7 @@
 # Lime Shield
 
 iOS app that scans medical bills and flags billing problems. Everything runs
-on device. Built by a 10th grader for the RevenueCat Shipaton 2026.
+on device. Built by an 11th grader for the RevenueCat Shipaton 2026.
 
 ## Layout
 
