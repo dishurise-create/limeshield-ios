@@ -94,6 +94,9 @@ chat. Compiling the real sources means the tests cannot drift from the app.
 - App Store featuring nomination submitted 2026-10-08 (App Enhancements) for
   1.0.1 with a publish date of 2026-10-30. 1.0.1 must be released that day
   (submit for review with manual release, then click Release on Oct 30).
+- New App Store screenshots for 1.0.1 are in social/posts/appstore/ (01-05,
+  1320x2868), made by social/tools/render_appstore.py. Upload them with the
+  1.0.1 version; screenshots can only change with a new version.
 - The 1-week free trial is LIVE (introductory offer on Pro Monthly, confirmed
   2026-10-08). Posts and outreach may mention it. The live 1.0 paywall text
   doesn't mention it yet; 1.0.1 fixes that.
