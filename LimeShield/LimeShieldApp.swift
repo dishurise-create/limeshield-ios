@@ -29,6 +29,13 @@ struct LimeShieldApp: App {
     }
 }
 
+/// Public links. The review URL opens the App Store's write-a-review sheet.
+enum AppLinks {
+    static let appStore = URL(string: "https://apps.apple.com/us/app/lime-shield/id6811397021")!
+    static let writeReview = URL(string: "https://apps.apple.com/app/id6811397021?action=write-review")!
+    static let shareMessage = "Lime Shield checks a medical bill from a photo and shows what's worth asking billing about. Nothing leaves your phone."
+}
+
 enum Disclaimers {
     /// One line. Used anywhere the full text would crowd the screen.
     static let short = "Findings are worth asking about, not proof of error."

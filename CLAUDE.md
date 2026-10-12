@@ -88,8 +88,10 @@ chat. Compiling the real sources means the tests cannot drift from the app.
   Build 2 was rejected; build 3 was resubmitted 2026-09-24 with a reply to
   App Review (`app-review-reply-2.1b.txt`).
 - Next: version 1.0.1 (build 4), not yet uploaded. Adds free-trial wording to
-  the paywall, the refund request letter, and free-tier counts that survive
-  a reinstall. The 1-week introductory offer was turned on early, on
+  the paywall, the refund request letter, free-tier counts that survive
+  a reinstall, a "Spread the word" section in Settings (share the app, rate
+  it), and a rating prompt shown once per version after a letter for a real
+  (non-sample) bill. Links live in `AppLinks` in `LimeShieldApp.swift`. The 1-week introductory offer was turned on early, on
   2026-10-07.
 - App Store featuring nomination submitted 2026-10-08 (App Enhancements) for
   1.0.1 with a publish date of 2026-10-30. 1.0.1 must be released that day

@@ -16,6 +16,7 @@ struct SettingsView: View {
             accentSection
             accountSection
             subscriptionSection
+            shareSection
             dataSection
             advancedSection
         }
@@ -122,6 +123,23 @@ struct SettingsView: View {
                 Button("Get Lime Shield Pro") { showPaywall = true }
             }
             Button("Restore purchases") { Task { await purchases.restore() } }
+        }
+    }
+
+    // MARK: Share
+
+    private var shareSection: some View {
+        Section {
+            ShareLink(item: AppLinks.appStore, message: Text(AppLinks.shareMessage)) {
+                Label("Share Lime Shield", systemImage: "square.and.arrow.up")
+            }
+            Link(destination: AppLinks.writeReview) {
+                Label("Rate on the App Store", systemImage: "star")
+            }
+        } header: {
+            Text("Spread the word")
+        } footer: {
+            Text("Know someone with a confusing medical bill? Sending them the app is the biggest help.")
         }
     }
 
