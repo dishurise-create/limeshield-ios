@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- Merged with the generated Info.plist. limeshield://scan etc. open a tab;
+	     used by the App Store in-app event deep link. -->
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>com.limeshield.LimeShield</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>limeshield</string>
+			</array>
+		</dict>
+	</array>
+</dict>
+</plist>

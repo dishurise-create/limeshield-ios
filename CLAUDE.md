@@ -91,7 +91,11 @@ chat. Compiling the real sources means the tests cannot drift from the app.
   the paywall, the refund request letter, free-tier counts that survive
   a reinstall, a "Spread the word" section in Settings (share the app, rate
   it), and a rating prompt shown once per version after a letter for a real
-  (non-sample) bill. Links live in `AppLinks` in `LimeShieldApp.swift`. The 1-week introductory offer was turned on early, on
+  (non-sample) bill. Links live in `AppLinks` in `LimeShieldApp.swift`. Also adds the
+  `limeshield://` URL scheme (`LimeShield-Info.plist` at the repo root, merged
+  with the generated Info.plist; `RootView.onOpenURL` picks the tab:
+  scan/history/learn/premium). The App Store in-app event uses
+  `limeshield://scan`, so the event must be submitted with 1.0.1. The 1-week introductory offer was turned on early, on
   2026-10-07.
 - App Store featuring nomination submitted 2026-10-08 (App Enhancements) for
   1.0.1 with a publish date of 2026-10-30. 1.0.1 must be released that day

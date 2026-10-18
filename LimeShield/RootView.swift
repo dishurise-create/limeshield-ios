@@ -23,5 +23,15 @@ struct RootView: View {
                 .tabItem { Label("Premium", systemImage: "sparkles") }
                 .tag(Tab.premium)
         }
+        .onOpenURL { url in
+            // limeshield://scan, ://history, ://learn, ://premium
+            guard url.scheme == "limeshield" else { return }
+            switch url.host {
+            case "history": tab = .history
+            case "learn":   tab = .learn
+            case "premium": tab = .premium
+            default:        tab = .scan
+            }
+        }
     }
 }

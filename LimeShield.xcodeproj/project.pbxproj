@@ -266,6 +266,7 @@
 				DEVELOPMENT_TEAM = 3B82LP5KCP;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "LimeShield-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Lime Shield";
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_NSCameraUsageDescription = "Lime Shield uses the camera to scan your paper bills. Scans are processed entirely on your device and never uploaded.";
@@ -309,6 +310,7 @@
 				DEVELOPMENT_TEAM = 3B82LP5KCP;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "LimeShield-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Lime Shield";
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_NSCameraUsageDescription = "Lime Shield uses the camera to scan your paper bills. Scans are processed entirely on your device and never uploaded.";
