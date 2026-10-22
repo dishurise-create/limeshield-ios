@@ -139,7 +139,7 @@ struct HomeView: View {
             .padding(.horizontal, 12)
             .padding(.vertical, 7)
             .background(Capsule().fill(settings.accentColor.opacity(0.16)))
-            .foregroundStyle(settings.accentTheme == .lime ? Brand.ink : settings.accentColor)
+            .foregroundStyle(Brand.ink)
     }
 
     // MARK: Scan target

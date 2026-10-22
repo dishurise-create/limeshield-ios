@@ -159,7 +159,7 @@ struct IssueDetailView: View {
                     .foregroundStyle(mine ? colors.text.opacity(0.75) : .secondary)
                 Text(text)
                     .font(.callout.weight(.semibold))
-                    .foregroundStyle(mine ? colors.text : Brand.ink)
+                    .foregroundStyle(mine ? AnyShapeStyle(colors.text) : AnyShapeStyle(Brand.ink))
                     .fixedSize(horizontal: false, vertical: true)
             }
             .padding(.horizontal, 14)

@@ -27,7 +27,7 @@ struct OnboardingView: View {
                             .foregroundStyle(Brand.buttonColors(for: settings.accentTheme).text)
                             .frame(width: 120, height: 120)
                             .background(Circle().fill(Brand.buttonColors(for: settings.accentTheme).fill))
-                            .shadow(color: Brand.limeFill.opacity(0.35), radius: 16, x: 0, y: 8)
+                            .shadow(color: settings.accentTheme.bright.opacity(0.35), radius: 16, x: 0, y: 8)
                         Text(pages[index].title)
                             .font(.title.weight(.heavy))
                             .foregroundStyle(Brand.ink)

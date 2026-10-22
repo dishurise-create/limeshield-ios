@@ -22,6 +22,7 @@ struct LimeShieldApp: App {
             .environmentObject(settings)
             .environmentObject(account)
             .tint(settings.accentColor)
+            .environment(\.brandTheme, settings.accentTheme)
             .fontDesign(.rounded)
             .preferredColorScheme(settings.themeMode.colorScheme)
             .dynamicTypeSize(settings.textScale.dynamicTypeSize)
@@ -46,52 +47,80 @@ enum Disclaimers {
 
 // MARK: - Shared visual language
 
-/// The bright look shared with the App Store screenshots and social posts:
-/// a mint, lemon and sky wash, white cards with a soft green shadow, dark green
-/// headlines and a bright lime marker. Dark mode keeps the same shapes on a
-/// deep green background.
+/// The bright look shared with the App Store screenshots and social posts: a
+/// pastel wash, white cards with a soft shadow, dark headlines and a bright
+/// marker. Every colour comes from the accent picked in Settings, so choosing
+/// Ocean or Sunset recolours the whole app, not just the buttons. Dark mode
+/// keeps the same shapes on a deep background.
 enum Brand {
-    /// Headline text: dark green in light mode, white in dark mode.
-    static let ink = dynamic(light: UIColor(red: 0.08, green: 0.21, blue: 0.10, alpha: 1),
-                             dark: .white)
-    /// Bright lime from the posts. Used as a fill behind ink text, never as text
+    /// Headline text: the accent's darkest tone in light mode, white in dark mode.
+    static let ink = BrandInk()
+    /// The accent's bright tone. Only ever a fill behind dark text, never text
     /// on white, where it's too light to read.
-    static let limeFill = Color(red: 0.49, green: 0.83, blue: 0.13)
+    static let fill = BrandFill()
     static let card = dynamic(light: .white, dark: .secondarySystemGroupedBackground)
-    static let shadow = dynamic(light: UIColor(red: 0.08, green: 0.25, blue: 0.08, alpha: 0.10),
+    static let shadow = dynamic(light: UIColor(red: 0.10, green: 0.20, blue: 0.10, alpha: 0.10),
                                 dark: .clear)
 
     static func dynamic(light: UIColor, dark: UIColor) -> Color {
         Color(UIColor { $0.userInterfaceStyle == .dark ? dark : light })
     }
 
-    /// Filled-button colours for an accent. Lime gets the bright fill with dark
-    /// text, like the posts; the other accents keep white text.
+    /// Filled-button colours: the accent's bright tone with its darkest tone on
+    /// top, like the posts.
     static func buttonColors(for accent: AppSettings.AccentTheme) -> (fill: Color, text: Color) {
-        accent == .lime ? (limeFill, Color(red: 0.08, green: 0.21, blue: 0.10)) : (accent.color, .white)
+        (accent.bright, accent.deep)
+    }
+}
+
+private struct BrandThemeKey: EnvironmentKey {
+    static let defaultValue: AppSettings.AccentTheme = .lime
+}
+
+extension EnvironmentValues {
+    /// The accent picked in Settings, set once at the root of the app.
+    var brandTheme: AppSettings.AccentTheme {
+        get { self[BrandThemeKey.self] }
+        set { self[BrandThemeKey.self] = newValue }
+    }
+}
+
+struct BrandInk: ShapeStyle {
+    func resolve(in environment: EnvironmentValues) -> Color {
+        environment.colorScheme == .dark ? .white : environment.brandTheme.deep
+    }
+}
+
+struct BrandFill: ShapeStyle {
+    func resolve(in environment: EnvironmentValues) -> Color {
+        environment.brandTheme.bright
+    }
+}
+
+/// Text that sits on a `BrandFill`: always the accent's darkest tone.
+struct BrandOnFill: ShapeStyle {
+    func resolve(in environment: EnvironmentValues) -> Color {
+        environment.brandTheme.deep
     }
 }
 
 /// Full-screen background used behind every screen.
 struct BrandBackground: View {
     @Environment(\.colorScheme) private var scheme
+    @Environment(\.brandTheme) private var theme
 
     var body: some View {
         ZStack {
             if scheme == .dark {
-                LinearGradient(colors: [Color(red: 0.05, green: 0.09, blue: 0.05),
-                                        Color(red: 0.03, green: 0.04, blue: 0.05)],
+                LinearGradient(colors: [theme.deep.opacity(0.9), Color(red: 0.03, green: 0.04, blue: 0.05)],
                                startPoint: .top, endPoint: .bottom)
                 Circle()
-                    .fill(Brand.limeFill.opacity(0.16))
+                    .fill(theme.bright.opacity(0.16))
                     .frame(width: 420, height: 420)
                     .blur(radius: 120)
                     .offset(x: 140, y: -320)
             } else {
-                LinearGradient(colors: [Color(red: 0.87, green: 0.97, blue: 0.78),
-                                        Color(red: 1.00, green: 0.96, blue: 0.75),
-                                        Color(red: 0.85, green: 0.93, blue: 1.00)],
-                               startPoint: .topLeading, endPoint: .bottomTrailing)
+                LinearGradient(colors: theme.wash, startPoint: .topLeading, endPoint: .bottomTrailing)
                 Circle()
                     .fill(Color.white.opacity(0.55))
                     .frame(width: 380, height: 380)
@@ -100,6 +129,7 @@ struct BrandBackground: View {
             }
         }
         .ignoresSafeArea()
+        .animation(.easeInOut(duration: 0.3), value: theme)
     }
 }
 
@@ -131,7 +161,7 @@ struct BrandCard: View {
     }
 }
 
-/// Two-line headline: dark green first line, second line on a lime marker,
+/// Two-line headline: dark first line, second line on a bright marker,
 /// the same as the screenshots and posts.
 struct MarkerHeadline: View {
     let first: String
@@ -143,10 +173,10 @@ struct MarkerHeadline: View {
             Text(first)
                 .foregroundStyle(Brand.ink)
             Text(marked)
-                .foregroundStyle(Color(red: 0.08, green: 0.21, blue: 0.10))
+                .foregroundStyle(BrandOnFill())
                 .padding(.horizontal, 12)
                 .padding(.vertical, 2)
-                .background(Capsule().fill(Brand.limeFill))
+                .background(Capsule().fill(Brand.fill))
         }
         .font(.system(size: size, weight: .heavy, design: .rounded))
         .multilineTextAlignment(.center)

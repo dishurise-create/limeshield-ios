@@ -76,7 +76,7 @@ struct AnalysisView: View {
             if let amount = verdictAmount {
                 Text(amount)
                     .font(.system(size: 34, weight: .heavy, design: .rounded))
-                    .foregroundStyle(settings.accentTheme == .lime ? Brand.ink : settings.accentColor)
+                    .foregroundStyle(Brand.ink)
                     .padding(.horizontal, 18)
                     .padding(.vertical, 4)
                     .background(Capsule().fill(settings.accentColor.opacity(0.18)))
