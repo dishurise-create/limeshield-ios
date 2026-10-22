@@ -9,6 +9,7 @@ struct AnalysisView: View {
     @State private var showPaywall = false
     @State private var showEditor = false
     @State private var confirmClearList = false
+    @State private var showWalkthrough = false
 
     init(analysis: BillAnalysis) {
         _analysis = State(initialValue: analysis)
@@ -34,6 +35,7 @@ struct AnalysisView: View {
         ScrollView {
             VStack(spacing: 22) {
                 verdict
+                if !analysis.issues.isEmpty && !isEOB { buddyRow }
                 if !analysis.issues.isEmpty { todoBlock }
                 ForEach(grouped) { group in
                     findingsBlock(group)
@@ -55,6 +57,11 @@ struct AnalysisView: View {
         .navigationBarTitleDisplayMode(.inline)
         .sheet(isPresented: $showLetter) { LetterView(analysis: analysis) }
         .sheet(isPresented: $showPaywall) { PaywallView() }
+        .sheet(isPresented: $showWalkthrough) {
+            BuddyWalkthroughView(analysis: analysis) { issue, state in setState(state, for: issue) }
+                .environment(\.brandTheme, settings.accentTheme)
+                .environmentObject(settings)
+        }
         .sheet(isPresented: $showEditor) {
             EditBillView(bill: analysis.bill) { corrected in apply(corrected) }
         }
@@ -96,6 +103,32 @@ struct AnalysisView: View {
         .background(
             BrandCard(radius: 20)
         )
+    }
+
+    /// Tap the buddy for a plain-words explanation of each finding, one at a time.
+    private var buddyRow: some View {
+        Button { showWalkthrough = true } label: {
+            HStack(alignment: .center, spacing: 14) {
+                ShieldBuddy(mood: .happy, size: 54)
+                BuddyBubble {
+                    HStack {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Want me to explain?")
+                                .font(.subheadline.weight(.heavy))
+                                .foregroundStyle(Brand.ink)
+                            Text("I'll go through each one in plain words.")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                        Spacer()
+                        Image(systemName: "chevron.right")
+                            .font(.footnote.weight(.bold))
+                            .foregroundStyle(settings.accentColor)
+                    }
+                }
+            }
+        }
+        .buttonStyle(.plain)
     }
 
     private var isEOB: Bool { analysis.bill.kind == .insurerEOB }

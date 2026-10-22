@@ -47,8 +47,8 @@ enum Disclaimers {
 
 // MARK: - Shared visual language
 
-/// The bright look shared with the App Store screenshots and social posts: a
-/// pastel wash, white cards with a soft shadow, dark headlines and a bright
+/// The look shared with the App Store screenshots and social posts: white cards
+/// with a soft shadow on the normal iOS background, dark headlines and a bright
 /// marker. Every colour comes from the accent picked in Settings, so choosing
 /// Ocean or Sunset recolours the whole app, not just the buttons. Dark mode
 /// keeps the same shapes on a deep background.
@@ -104,32 +104,11 @@ struct BrandOnFill: ShapeStyle {
     }
 }
 
-/// Full-screen background used behind every screen.
+/// Full-screen background used behind every screen: the standard iOS grouped
+/// background, so the white cards and coloured accents do the talking.
 struct BrandBackground: View {
-    @Environment(\.colorScheme) private var scheme
-    @Environment(\.brandTheme) private var theme
-
     var body: some View {
-        ZStack {
-            if scheme == .dark {
-                LinearGradient(colors: [theme.deep.opacity(0.9), Color(red: 0.03, green: 0.04, blue: 0.05)],
-                               startPoint: .top, endPoint: .bottom)
-                Circle()
-                    .fill(theme.bright.opacity(0.16))
-                    .frame(width: 420, height: 420)
-                    .blur(radius: 120)
-                    .offset(x: 140, y: -320)
-            } else {
-                LinearGradient(colors: theme.wash, startPoint: .topLeading, endPoint: .bottomTrailing)
-                Circle()
-                    .fill(Color.white.opacity(0.55))
-                    .frame(width: 380, height: 380)
-                    .blur(radius: 90)
-                    .offset(x: -120, y: -260)
-            }
-        }
-        .ignoresSafeArea()
-        .animation(.easeInOut(duration: 0.3), value: theme)
+        Color(.systemGroupedBackground).ignoresSafeArea()
     }
 }
 

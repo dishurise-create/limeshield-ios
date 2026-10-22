@@ -14,6 +14,25 @@ struct HomeView: View {
     @State private var newAnalysis: BillAnalysis?
     @State private var showPaywall = false
     @State private var errorMessage: String?
+    /// Shown full screen right after a scan, before the overview opens.
+    @State private var revealAnalysis: BillAnalysis?
+    @State private var pendingAnalysis: BillAnalysis?
+    @State private var nextUp: NextUp?
+    /// The flagged total the user last saw on this screen. -1 until first set, so
+    /// updating the app doesn't celebrate everything at once.
+    @AppStorage("lastSeenFlagged") private var lastSeenFlagged: Double = -1
+    @State private var displayedFlagged: Double = 0
+    @State private var flaggedDelta: Double = 0
+    @State private var celebrate = false
+    @State private var glow = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    /// The finding the buddy suggests starting with.
+    struct NextUp: Identifiable, Hashable {
+        let analysisID: UUID
+        let issue: BillIssue
+        var id: String { analysisID.uuidString + issue.stateKey }
+    }
 
     private var hasScans: Bool { store.billCount > 0 }
 
@@ -21,15 +40,8 @@ struct HomeView: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 22) {
-                    if hasScans {
-                        // Same headline as the App Store screenshots and posts, so
-                        // the app and its marketing look like one thing.
-                        MarkerHeadline(first: "Check your bill", marked: "before you pay.", size: 28)
-                            .padding(.top, 4)
-                        resultsHero
-                    } else {
-                        firstRunHero
-                    }
+                    buddyGreeting
+                    if hasScans { resultsHero } else { privacyBadge }
                     scanCard
                     secondaryRow
                     if !hasScans { steps }
@@ -54,6 +66,27 @@ struct HomeView: View {
             .navigationDestination(item: $newAnalysis) { analysis in
                 AnalysisView(analysis: analysis)
             }
+            .navigationDestination(item: $nextUp) { target in
+                nextUpDetail(target)
+            }
+            .onAppear(perform: refreshFlagged)
+        }
+        .overlay {
+            if celebrate { ConfettiView().transition(.opacity) }
+        }
+        .sensoryFeedback(.success, trigger: celebrate) { _, new in new }
+        .fullScreenCover(item: $revealAnalysis, onDismiss: {
+            if let analysis = pendingAnalysis {
+                pendingAnalysis = nil
+                newAnalysis = analysis
+            }
+        }) { analysis in
+            ScanRevealView(analysis: analysis) {
+                pendingAnalysis = analysis
+                revealAnalysis = nil
+            }
+            .environmentObject(settings)
+            .environment(\.brandTheme, settings.accentTheme)
         }
         .sheet(isPresented: $showScanner) {
             DocumentScannerView { images in
@@ -78,26 +111,111 @@ struct HomeView: View {
         }
     }
 
-    // MARK: Hero, first run
+    // MARK: Buddy greeting
 
-    private var firstRunHero: some View {
-        VStack(spacing: 14) {
-            Image("Logo")
-                .resizable()
-                .scaledToFit()
-                .frame(width: 96, height: 96)
-                .accessibilityHidden(true)
-
-            MarkerHeadline(first: "Check your bill", marked: "before you pay.")
-
-            Text("Snap a photo. See what's worth asking about.")
-                .font(.subheadline.weight(.medium))
-                .foregroundStyle(.secondary)
-                .multilineTextAlignment(.center)
-
-            privacyBadge
+    /// The buddy says what to do next. With open to-do items it offers the most
+    /// valuable one; otherwise it nudges towards scanning.
+    private var buddyGreeting: some View {
+        HStack(alignment: .top, spacing: 14) {
+            ShieldBuddy(mood: greetingMood, size: 68)
+                .padding(.top, 4)
+            BuddyBubble {
+                VStack(alignment: .leading, spacing: 10) {
+                    Text(greetingText)
+                        .font(.subheadline.weight(.bold))
+                        .foregroundStyle(Brand.ink)
+                        .fixedSize(horizontal: false, vertical: true)
+                    if let target = suggestedNextUp {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("NEXT UP")
+                                .font(.caption2.weight(.heavy))
+                                .tracking(0.6)
+                                .foregroundStyle(settings.accentColor)
+                            Text(target.issue.title)
+                                .font(.subheadline.weight(.semibold))
+                                .lineLimit(2)
+                            if let analysis = store.analyses.first(where: { $0.id == target.analysisID }) {
+                                Text(analysis.title)
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                                    .lineLimit(1)
+                            }
+                        }
+                        Button {
+                            nextUp = target
+                        } label: {
+                            Label("Show me what to say", systemImage: "bubble.left.and.text.bubble.right")
+                                .font(.subheadline.weight(.bold))
+                        }
+                        .buttonStyle(BrandButtonStyle())
+                    }
+                }
+            }
         }
         .padding(.top, 6)
+    }
+
+    /// Highest-value finding still on a to-do list.
+    private var suggestedNextUp: NextUp? {
+        let todos = store.analyses.filter { !$0.isSample }.flatMap { analysis in
+            analysis.todoIssues.map { NextUp(analysisID: analysis.id, issue: $0) }
+        }
+        return todos.max { ($0.issue.estimatedImpact ?? 0) < ($1.issue.estimatedImpact ?? 0) }
+    }
+
+    private var greetingMood: ShieldBuddy.Mood { .happy }
+
+    /// To-do items on real bills only; the sample bill is a demo.
+    private var openTodos: Int {
+        store.analyses.filter { !$0.isSample }.reduce(0) { $0 + $1.todoIssues.count }
+    }
+
+    private var greetingText: String {
+        let open = openTodos
+        if open > 0 {
+            let amount = suggestedNextUp?.issue.estimatedImpact.map { " Want to start with \($0.usd)?" } ?? " Want to start?"
+            return "You've got \(open) thing\(open == 1 ? "" : "s") to raise." + amount
+        }
+        if hasScans { return "All caught up! Scan the next bill when it arrives and I'll check it." }
+        return "Hi! I'm your bill buddy. Snap a photo of a medical bill and I'll check it for you."
+    }
+
+    @ViewBuilder
+    private func nextUpDetail(_ target: NextUp) -> some View {
+        if let analysis = store.analyses.first(where: { $0.id == target.analysisID }) {
+            IssueDetailView(
+                issue: target.issue,
+                state: analysis.state(for: target.issue),
+                onSetState: { newState in
+                    var updated = analysis
+                    updated.setState(newState, for: target.issue)
+                    store.update(updated)
+                })
+        }
+    }
+
+    // MARK: Flagged total
+
+    /// Counts the total up from what the user last saw, with confetti, whenever it
+    /// has grown since their last visit to this screen.
+    private func refreshFlagged() {
+        let total = store.totalFlagged
+        defer { lastSeenFlagged = total }
+        guard lastSeenFlagged >= 0, total > lastSeenFlagged + 0.5 else {
+            displayedFlagged = total
+            flaggedDelta = 0
+            return
+        }
+        flaggedDelta = total - lastSeenFlagged
+        displayedFlagged = lastSeenFlagged
+        guard !reduceMotion else { displayedFlagged = total; return }
+        Task {
+            try? await Task.sleep(for: .milliseconds(400))
+            withAnimation(.easeOut(duration: 1.2)) { displayedFlagged = total }
+            withAnimation { celebrate = true }
+            try? await Task.sleep(for: .seconds(3))
+            withAnimation { celebrate = false }
+        }
     }
 
     /// Once there is history, the logo shrinks and the numbers take the space.
@@ -107,17 +225,27 @@ struct HomeView: View {
                 .font(.subheadline.weight(.bold))
                 .foregroundStyle(Brand.ink)
 
-            Text(store.totalFlagged.usd)
+            Text(displayedFlagged.usd)
                 .font(.system(size: 50, weight: .heavy, design: .rounded))
                 .foregroundStyle(settings.accentColor)
+                .contentTransition(.numericText(value: displayedFlagged))
                 .minimumScaleFactor(0.6)
                 .lineLimit(1)
 
+            if flaggedDelta > 0 {
+                Text("+ \(flaggedDelta.usd)")
+                    .font(.subheadline.weight(.heavy))
+                    .foregroundStyle(Brand.ink)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 4)
+                    .background(Capsule().fill(settings.accentColor.opacity(0.18)))
+            }
+
             HStack(spacing: 6) {
                 Text("across \(store.billCount) bill\(store.billCount == 1 ? "" : "s")")
-                if store.openTodoCount > 0 {
+                if openTodos > 0 {
                     Text("·")
-                    Text("\(store.openTodoCount) still to raise")
+                    Text("\(openTodos) still to raise")
                         .foregroundStyle(settings.accentColor)
                 }
             }
@@ -157,13 +285,26 @@ struct HomeView: View {
                     .stroke(settings.accentColor, style: StrokeStyle(lineWidth: 3.5, lineCap: .round))
 
                 VStack(spacing: 12) {
-                    Image(systemName: "camera.viewfinder")
-                        .font(.system(size: 30, weight: .semibold))
-                        .foregroundStyle(Brand.buttonColors(for: settings.accentTheme).text)
-                        .frame(width: 66, height: 66)
-                        .background(Circle().fill(Brand.buttonColors(for: settings.accentTheme).fill))
-                        .shadow(color: Brand.buttonColors(for: settings.accentTheme).fill.opacity(0.4),
-                                radius: 10, x: 0, y: 5)
+                    let colors = Brand.buttonColors(for: settings.accentTheme)
+                    ZStack {
+                        // Slow breathing glow behind the button.
+                        Circle()
+                            .fill(colors.fill.opacity(0.35))
+                            .frame(width: 96, height: 96)
+                            .blur(radius: 14)
+                            .scaleEffect(glow ? 1.15 : 0.85)
+                            .opacity(glow ? 1 : 0.55)
+                        Image(systemName: "camera.viewfinder")
+                            .font(.system(size: 32, weight: .semibold))
+                            .foregroundStyle(colors.text)
+                            .frame(width: 74, height: 74)
+                            .background(Circle().fill(colors.fill))
+                            .shadow(color: colors.fill.opacity(0.5), radius: 12, x: 0, y: 5)
+                    }
+                    .onAppear {
+                        guard !reduceMotion else { return }
+                        withAnimation(.easeInOut(duration: 1.8).repeatForever(autoreverses: true)) { glow = true }
+                    }
                     Text("Scan a bill")
                         .font(.title2.weight(.heavy))
                         .foregroundStyle(Brand.ink)
@@ -172,7 +313,7 @@ struct HomeView: View {
                         .foregroundStyle(.secondary)
                 }
             }
-            .frame(height: 210)
+            .frame(height: 230)
         }
         .buttonStyle(.plain)
     }
@@ -313,7 +454,7 @@ struct HomeView: View {
         // than analysed, so it shouldn't use up one of the free scans.
         let wasAnalysed = bill.kind != .insurerEOB && bill.multipleBillsDetected != true
         if countsAgainstFreeTier && wasAnalysed { purchases.recordScan() }
-        newAnalysis = analysis
+        revealAnalysis = analysis
     }
 }
 

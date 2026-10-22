@@ -79,19 +79,6 @@ final class AppSettings: ObservableObject {
             case .plum:   return Color(red: 0.30, green: 0.08, blue: 0.26)
             }
         }
-        /// Three pastel stops for the light-mode background.
-        var wash: [Color] {
-            func c(_ r: Double, _ g: Double, _ b: Double) -> Color { Color(red: r, green: g, blue: b) }
-            switch self {
-            case .lime:   return [c(0.87, 0.97, 0.78), c(1.00, 0.96, 0.75), c(0.85, 0.93, 1.00)]
-            case .teal:   return [c(0.82, 0.97, 0.96), c(0.93, 0.98, 0.90), c(0.85, 0.92, 1.00)]
-            case .ocean:  return [c(0.84, 0.92, 1.00), c(0.93, 0.95, 1.00), c(0.86, 0.97, 0.95)]
-            case .indigo: return [c(0.90, 0.89, 1.00), c(0.97, 0.92, 1.00), c(0.86, 0.93, 1.00)]
-            case .forest: return [c(0.84, 0.96, 0.86), c(0.95, 0.97, 0.84), c(0.86, 0.94, 0.96)]
-            case .sunset: return [c(1.00, 0.91, 0.82), c(1.00, 0.96, 0.80), c(1.00, 0.88, 0.90)]
-            case .plum:   return [c(0.97, 0.88, 0.96), c(1.00, 0.93, 0.92), c(0.90, 0.89, 1.00)]
-            }
-        }
     }
 
     // MARK: Text size

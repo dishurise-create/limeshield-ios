@@ -79,13 +79,21 @@ chat. Compiling the real sources means the tests cannot drift from the app.
   harmless, and deliberately not fixed. Do not "clean them up" without asking.
 - Disclaimer strings live in `Disclaimers` in `LimeShieldApp.swift`. Shared
   view styling lives there too (`cardSurface`, `SectionLabel`, `Pill`).
-- Visual style (1.0.1, matches the App Store screenshots and posts): `Brand`,
-  `BrandBackground` (mint/lemon/sky gradient; deep green in dark mode),
-  `BrandCard` (white card, soft green shadow), `MarkerHeadline` (second line on
-  a lime marker), `BrandButtonStyle` (bright lime fill with dark text when the
-  accent is Lime), and `.fontDesign(.rounded)` app-wide. Screens use
-  `.brandBackground()` instead of the grey grouped background. Bright lime
-  (`Brand.limeFill`) is only ever a fill behind dark text, never text on white.
+- Visual style (1.0.1): normal iOS grouped background (`BrandBackground`),
+  white `BrandCard`s with a soft shadow, `MarkerHeadline`, `BrandButtonStyle`,
+  `.fontDesign(.rounded)`. Colours come from the accent picked in Settings via
+  `\.brandTheme` (`Brand.ink`, `Brand.fill`, `AccentTheme.bright/deep`), so
+  every accent recolours the whole app. Bright fills only ever sit behind dark
+  text, never as text on white.
+- Buddy (`Buddy.swift`, 1.0.1): `ShieldBuddy` character (drawn in code, blinks,
+  respects Reduce Motion). After every scan `ScanRevealView` (the "Bill X-ray")
+  redraws the bill from parsed lines, sweeps a beam and glows the lines behind
+  each finding, then the buddy says what it found and opens the overview. The
+  overview's buddy row opens `BuddyWalkthroughView` (one finding per card, Add
+  to my list). Home: buddy greeting with Next up (highest-value to-do on a real,
+  non-sample bill), and the flagged total counts up with `ConfettiView` when it
+  has grown since `lastSeenFlagged` (AppStorage, -1 until first set). No photo
+  is stored for the X-ray.
 - Simulator screenshots: `xcrun simctl io … screenshot` can return a stale
   frame after UI changes; the simulator control tool's screenshot is reliable.
 
