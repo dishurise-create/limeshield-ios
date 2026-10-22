@@ -6,5 +6,5 @@ SRC=LimeShield
 OUT="${TMPDIR:-/tmp}/limeshield-ocr-tests"
 xcrun swiftc -O -o "$OUT" testbills/OCRTests/main.swift \
   $SRC/BillParser.swift $SRC/Models.swift $SRC/ReferenceData.swift \
-  $SRC/RulesEngine.swift $SRC/RulesEngineExtended.swift $SRC/RulesEngineMore.swift
+  $SRC/RulesEngine.swift $SRC/RulesEngineExtended.swift $SRC/RulesEngineMore.swift $SRC/RulesEngineAccuracy.swift
 "$OUT" testbills

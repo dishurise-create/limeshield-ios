@@ -31,6 +31,71 @@ func hasCharge(_ bill: Bill, _ amount: Double) -> Bool {
     bill.chargeLines.contains { abs(($0.amount ?? 0) - amount) < 0.001 }
 }
 
+// MARK: Rules 47-50 (1.0.1): each fires on its pattern, and stays quiet nearby
+
+do {
+    let bill = BillParser.parse(text: """
+    08/02/2026 VENIPUNCTURE 36415 $25.00
+    08/02/2026 VENIPUNCTURE 36415 $25.00
+    08/02/2026 CBC WITH DIFF 85025 $60.00
+    """)
+    check("R47 two draws same day fire", rules(bill).contains("blood_draw_repeat"), "\(rules(bill))")
+}
+do {
+    let bill = BillParser.parse(text: """
+    08/02/2026 VENIPUNCTURE 36415 $25.00
+    08/03/2026 VENIPUNCTURE 36415 $25.00
+    """)
+    check("R47 draws on different days stay quiet", !rules(bill).contains("blood_draw_repeat"), "\(rules(bill))")
+}
+do {
+    let bill = BillParser.parse(text: """
+    08/02/2026 ER VISIT LEVEL 3 99283 $650.00
+    08/02/2026 PULSE OXIMETRY 94760 $45.00
+    """)
+    check("R48 pulse ox with visit fires", rules(bill).contains("pulse_ox_bundled"), "\(rules(bill))")
+}
+do {
+    let bill = BillParser.parse(text: """
+    08/02/2026 PULSE OXIMETRY 94760 $45.00
+    08/02/2026 OVERNIGHT OXIMETRY 94762 $120.00
+    """)
+    check("R48 pulse ox without a visit stays quiet", !rules(bill).contains("pulse_ox_bundled"), "\(rules(bill))")
+}
+do {
+    let bill = BillParser.parse(text: """
+    08/02/2026 ROOM SEMI PRIVATE $1,200.00
+    08/02/2026 TELEVISION RENTAL $15.00
+    08/02/2026 SKIN LOTION $12.00
+    """)
+    check("R49 comfort items fire", rules(bill).contains("comfort_items"), "\(rules(bill))")
+}
+do {
+    let bill = BillParser.parse(text: """
+    08/02/2026 PHONE CONSULT 99441 $80.00
+    08/02/2026 TISSUE PATHOLOGY 88305 $210.00
+    """)
+    // "phone" inside a description with a code is still medical; "tissue pathology" is a lab test.
+    let r = rules(bill)
+    check("R49 'tissue pathology' is not a comfort item", !RulesEngine.analyze(bill).contains { $0.ruleID == "comfort_items" && $0.evidence.contains { $0.contains("88305") } }, "\(r)")
+}
+do {
+    let bill = BillParser.parse(text: """
+    08/02/2026 X-RAY CHEST 71046 $210.00
+    08/02/2026 X-RAY CHEST 71046 $180.00
+    """)
+    check("R50 same code two prices fires", rules(bill).contains("same_code_two_prices"), "\(rules(bill))")
+}
+do {
+    let bill = BillParser.parse(text: """
+    08/02/2026 ONDANSETRON INJ J2405 $40.00
+    08/02/2026 ONDANSETRON INJ J2405 $80.00
+    08/02/2026 X-RAY CHEST 71046 $210.00
+    08/03/2026 X-RAY CHEST 71046 $180.00
+    """)
+    check("R50 drug codes and different days stay quiet", !rules(bill).contains("same_code_two_prices"), "\(rules(bill))")
+}
+
 // MARK: Rule 1: summary and total rows are never line items
 
 do {

@@ -66,11 +66,12 @@ enum RulesEngine {
         issues += surpriseBilling(bill)
         issues += extendedRules(bill)   // rules 14-30, see RulesEngineExtended.swift
         issues += furtherRules(bill)    // rules 31-45, see RulesEngineMore.swift
+        issues += accuracyRules(bill)   // rules 47-50, see RulesEngineAccuracy.swift
         return postProcess(issues)
     }
 
     /// How many distinct checks a bill is put through. Shown in the results header.
-    static let ruleCount = 46
+    static let ruleCount = 50
 
     // MARK: Post-processing (pass 5: merge, rank, cap)
 

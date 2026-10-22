@@ -44,6 +44,14 @@ enum ReferenceData {
         "admission kit", "warming blanket",
     ]
 
+    /// Personal and comfort items, matched with spaces around them so "tv" doesn't
+    /// match inside another word.
+    static let comfortItemTerms = [
+        " lotion", " tissues", "facial tissue", "kleenex", " slippers", " socks ", "deodorant", " comb ",
+        " shampoo", " mouthwash", " razor", "television", " tv ", "telephone",
+        " phone ", "comfort kit", "hygiene kit", "personal care kit",
+    ]
+
     static let dayBasedTerms = ["room", "bed", "daily", "per day", "semi-priv"]
 
     static let eobMarkers = ["this is not a bill", "explanation of benefits"]

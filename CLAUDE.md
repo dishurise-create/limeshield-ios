@@ -21,8 +21,8 @@ The pipeline is: `OCRService` (Vision) → `BillParser` → `RulesEngine` → vi
   into rows by vertical position. Vision's y origin is bottom-left.
 - `BillParser.swift` — turns rows into a `Bill`. This is the most carefully
   written file in the project. See the parser rules below before touching it.
-- `RulesEngine.swift`, `RulesEngineExtended.swift`, `RulesEngineMore.swift` —
-  46 checks across 8 categories. Plain Swift, no model, no network.
+- `RulesEngine.swift`, `RulesEngineExtended.swift`, `RulesEngineMore.swift`,
+  `RulesEngineAccuracy.swift` — 50 checks across 8 categories. Plain Swift, no model, no network.
 - `Models.swift` — `Bill`, `Issue`, `DocumentKind`, `AnalysisStore`.
 - `PurchaseManager.swift` — RevenueCat. Entitlement id `pro`, product
   `limeshield_pro_monthly`, 2.99/month. Free tier is 2 scans. The paywall
@@ -56,7 +56,8 @@ Everything else is phrased as a question.
 ## Verification
 
 `testbills/run_parser_tests.sh` compiles the app's real `BillParser`, `Models`,
-`ReferenceData` and `RulesEngine*` sources on the Mac together with the
+`ReferenceData` and `RulesEngine*` sources (add any new `RulesEngine*.swift`
+file to this script and to `run_ocr_tests.sh`) on the Mac together with the
 fixtures in `testbills/ParserTests/main.swift`, and runs them. Each fixture has
 a known answer, and most encode one of the parser rules above. Run it after
 any parser or rules change, and add a fixture for every new bug found.

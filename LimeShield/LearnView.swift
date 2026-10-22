@@ -151,12 +151,15 @@ enum RuleCatalog {
             "The same service billed twice on one day",
             "The same charge appearing on several dates",
             "Two separate visit charges for a single day",
+            "The blood-draw fee charged more than once a day",
+            "One service billed twice at two different prices",
         ]),
         Group(title: "Pricing", items: [
             "Charges far above typical rates for the code",
             "Over-the-counter medicine at hospital prices",
             "Basic supplies billed on top of the room fee",
             "Vague lump sums like \"miscellaneous supplies\"",
+            "Personal items like lotion, tissues or a TV",
         ]),
         Group(title: "How it was coded", items: [
             "Lab tests billed apart from the panel that includes them",
@@ -164,6 +167,7 @@ enum RuleCatalog {
             "Preventive care arriving with a balance owing",
             "Vaccines and their administration fees",
             "An assistant surgeon billed separately",
+            "An oxygen reading billed on top of the visit",
         ]),
         Group(title: "Fees and add-ons", items: [
             "After-hours and special service surcharges",

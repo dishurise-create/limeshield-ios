@@ -110,6 +110,30 @@ enum Pushback {
                          youSay: "I'm disputing specific charges in writing today. Please note the account as disputed and pause collection activity."),
             ]
 
+        case "blood_draw_repeat":
+            return [
+                Exchange(theySay: "Each test needs its own draw.",
+                         youSay: "Several tests can come from one draw. Can you show me the separate times blood was taken in my record?"),
+            ]
+
+        case "pulse_ox_bundled":
+            return [
+                Exchange(theySay: "It's a separate test.",
+                         youSay: "Was it continuous monitoring or a single reading? A single reading is normally part of the visit."),
+            ]
+
+        case "comfort_items":
+            return [
+                Exchange(theySay: "Those items were provided to you.",
+                         youSay: "I wasn't told they'd be charged, and I didn't ask for them. Please remove them from the bill."),
+            ]
+
+        case "same_code_two_prices":
+            return [
+                Exchange(theySay: "Both services were performed.",
+                         youSay: "Then please tell me what each one was and why they're priced differently."),
+            ]
+
         default:
             return [
                 Exchange(theySay: "That charge is correct.",
