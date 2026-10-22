@@ -79,6 +79,15 @@ chat. Compiling the real sources means the tests cannot drift from the app.
   harmless, and deliberately not fixed. Do not "clean them up" without asking.
 - Disclaimer strings live in `Disclaimers` in `LimeShieldApp.swift`. Shared
   view styling lives there too (`cardSurface`, `SectionLabel`, `Pill`).
+- Visual style (1.0.1, matches the App Store screenshots and posts): `Brand`,
+  `BrandBackground` (mint/lemon/sky gradient; deep green in dark mode),
+  `BrandCard` (white card, soft green shadow), `MarkerHeadline` (second line on
+  a lime marker), `BrandButtonStyle` (bright lime fill with dark text when the
+  accent is Lime), and `.fontDesign(.rounded)` app-wide. Screens use
+  `.brandBackground()` instead of the grey grouped background. Bright lime
+  (`Brand.limeFill`) is only ever a fill behind dark text, never text on white.
+- Simulator screenshots: `xcrun simctl io … screenshot` can return a stale
+  frame after UI changes; the simulator control tool's screenshot is reliable.
 
 ## Shipping state
 

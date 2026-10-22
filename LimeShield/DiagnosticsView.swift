@@ -126,6 +126,7 @@ struct DiagnosticsView: View {
                 }
             }
         }
+        .brandBackground()
         .navigationTitle("Scan details")
         .navigationBarTitleDisplayMode(.inline)
     }

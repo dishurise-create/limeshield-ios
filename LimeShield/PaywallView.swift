@@ -31,7 +31,7 @@ struct PremiumBody: View {
             .padding(.top, 20)
             .padding(.bottom, 32)
         }
-        .background(Color(.systemGroupedBackground))
+        .brandBackground()
     }
 
     private var header: some View {
@@ -39,8 +39,7 @@ struct PremiumBody: View {
             Image(systemName: "shield.lefthalf.filled.badge.checkmark")
                 .font(.system(size: 50))
                 .foregroundStyle(settings.accentColor)
-            Text("Lime Shield Pro")
-                .font(.title.weight(.bold))
+            MarkerHeadline(first: "Lime Shield", marked: "Pro", size: 34)
             Text("One catch pays for years.")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
@@ -57,8 +56,7 @@ struct PremiumBody: View {
         }
         .padding(.horizontal, 16)
         .background(
-            RoundedRectangle(cornerRadius: 18, style: .continuous)
-                .fill(Color(.secondarySystemGroupedBackground))
+            BrandCard(radius: 20)
         )
     }
 
@@ -105,7 +103,7 @@ struct PremiumBody: View {
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 4)
                 }
-                .buttonStyle(.borderedProminent)
+                .buttonStyle(BrandButtonStyle())
                 .controlSize(.large)
                 .disabled(isWorking)
             }
@@ -126,8 +124,7 @@ struct PremiumBody: View {
             .frame(maxWidth: .infinity)
             .padding(.vertical, 16)
             .background(
-                RoundedRectangle(cornerRadius: 18, style: .continuous)
-                    .fill(Color(.secondarySystemGroupedBackground))
+                BrandCard(radius: 20)
             )
         }
     }

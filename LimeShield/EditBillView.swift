@@ -58,6 +58,7 @@ struct EditBillView: View {
                     Text("Swipe a charge to delete it. Tap one to edit its description, amount, billing code, date, or quantity.")
                 }
             }
+            .brandBackground()
             .navigationTitle("Edit scan")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -130,6 +131,7 @@ struct LineEditorView: View {
                 }
             }
         }
+        .brandBackground()
         .navigationTitle("Edit charge")
         .navigationBarTitleDisplayMode(.inline)
     }

@@ -35,7 +35,7 @@ struct IssueDetailView: View {
             .padding(.horizontal, 20)
             .padding(.vertical, 20)
         }
-        .background(Color(.systemGroupedBackground))
+        .brandBackground()
         .navigationTitle("Finding")
         .navigationBarTitleDisplayMode(.inline)
     }
@@ -51,7 +51,8 @@ struct IssueDetailView: View {
                 }
             }
             Text(issue.title)
-                .font(.title3.weight(.semibold))
+                .font(.title2.weight(.heavy))
+                .foregroundStyle(Brand.ink)
                 .fixedSize(horizontal: false, vertical: true)
             Text(issue.detail)
                 .font(.callout)
@@ -97,24 +98,18 @@ struct IssueDetailView: View {
         }
     }
 
+    /// Shown as a chat, billing on the left in white and you on the right in
+    /// lime, the same as the "what to say" post.
     private var pushbackCard: some View {
         VStack(alignment: .leading, spacing: 10) {
             SectionLabel(text: "If they push back", count: nil)
-            VStack(alignment: .leading, spacing: 0) {
+            VStack(spacing: 10) {
                 ForEach(Array(exchanges.enumerated()), id: \.offset) { index, exchange in
-                    VStack(alignment: .leading, spacing: 10) {
-                        reply("They may say", exchange.theySay, .secondary)
-                        reply("You can say", exchange.youSay, settings.accentColor)
-                    }
-                    .padding(.vertical, 12)
-                    if index < exchanges.count - 1 { Divider().opacity(0.4) }
+                    bubble("Billing says", exchange.theySay, mine: false)
+                    bubble("You say", exchange.youSay, mine: true)
+                    if index < exchanges.count - 1 { Spacer().frame(height: 6) }
                 }
             }
-            .padding(.horizontal, 16)
-            .background(
-                RoundedRectangle(cornerRadius: 18, style: .continuous)
-                    .fill(Color(.secondarySystemGroupedBackground))
-            )
         }
     }
 
@@ -142,8 +137,7 @@ struct IssueDetailView: View {
             }
             .padding(.horizontal, 16)
             .background(
-                RoundedRectangle(cornerRadius: 18, style: .continuous)
-                    .fill(Color(.secondarySystemGroupedBackground))
+                BrandCard(radius: 20)
             )
 
             if let note = stateNote {
@@ -154,16 +148,30 @@ struct IssueDetailView: View {
 
     // MARK: Pieces
 
-    private func reply(_ label: String, _ text: String, _ color: Color) -> some View {
-        VStack(alignment: .leading, spacing: 3) {
-            Text(label.uppercased())
-                .font(.caption2.weight(.bold))
-                .tracking(0.4)
-                .foregroundStyle(color)
-            Text(text)
-                .font(.callout)
-                .fixedSize(horizontal: false, vertical: true)
+    private func bubble(_ label: String, _ text: String, mine: Bool) -> some View {
+        let colors = Brand.buttonColors(for: settings.accentTheme)
+        return HStack {
+            if mine { Spacer(minLength: 36) }
+            VStack(alignment: .leading, spacing: 4) {
+                Text(label.uppercased())
+                    .font(.caption2.weight(.heavy))
+                    .tracking(0.5)
+                    .foregroundStyle(mine ? colors.text.opacity(0.75) : .secondary)
+                Text(text)
+                    .font(.callout.weight(.semibold))
+                    .foregroundStyle(mine ? colors.text : Brand.ink)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            .padding(.horizontal, 14)
+            .padding(.vertical, 11)
+            .background(
+                RoundedRectangle(cornerRadius: 20, style: .continuous)
+                    .fill(mine ? colors.fill : Brand.card)
+                    .shadow(color: Brand.shadow, radius: 10, x: 0, y: 4)
+            )
+            if !mine { Spacer(minLength: 36) }
         }
+        .textSelection(.enabled)
     }
 
     private func row(_ title: String, _ icon: String, _ color: Color,

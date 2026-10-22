@@ -68,9 +68,10 @@ struct LearnView: View {
                     Text("Built so anyone can read a medical bill the way a billing specialist would, without giving up their privacy.")
                         .font(.callout)
                         .foregroundStyle(.secondary)
-                    LabeledContent("Version", value: "1.0")
+                    LabeledContent("Version", value: Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "")
                 }
             }
+            .brandBackground()
             .navigationTitle("Learn")
         }
     }
@@ -80,12 +81,12 @@ struct LearnView: View {
     private func step(_ number: Int, _ title: String, _ detail: String) -> some View {
         HStack(alignment: .top, spacing: 12) {
             Text("\(number)")
-                .font(.caption.weight(.bold))
-                .frame(width: 22, height: 22)
-                .background(Circle().fill(settings.accentColor.opacity(0.16)))
-                .foregroundStyle(settings.accentColor)
+                .font(.subheadline.weight(.heavy))
+                .frame(width: 28, height: 28)
+                .background(Circle().fill(Brand.buttonColors(for: settings.accentTheme).fill))
+                .foregroundStyle(Brand.buttonColors(for: settings.accentTheme).text)
             VStack(alignment: .leading, spacing: 2) {
-                Text(title).font(.callout.weight(.medium))
+                Text(title).font(.callout.weight(.bold)).foregroundStyle(Brand.ink)
                 Text(detail).font(.caption).foregroundStyle(.secondary)
             }
         }

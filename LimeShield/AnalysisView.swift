@@ -50,7 +50,7 @@ struct AnalysisView: View {
             .padding(.horizontal, 20)
             .padding(.vertical, 20)
         }
-        .background(Color(.systemGroupedBackground))
+        .brandBackground()
         .navigationTitle(analysis.title)
         .navigationBarTitleDisplayMode(.inline)
         .sheet(isPresented: $showLetter) { LetterView(analysis: analysis) }
@@ -69,13 +69,17 @@ struct AnalysisView: View {
                 .foregroundStyle(verdictColor)
 
             Text(verdictTitle)
-                .font(.title3.weight(.semibold))
+                .font(.title3.weight(.heavy))
+                .foregroundStyle(Brand.ink)
                 .multilineTextAlignment(.center)
 
             if let amount = verdictAmount {
                 Text(amount)
-                    .font(.title.weight(.bold))
-                    .foregroundStyle(settings.accentColor)
+                    .font(.system(size: 34, weight: .heavy, design: .rounded))
+                    .foregroundStyle(settings.accentTheme == .lime ? Brand.ink : settings.accentColor)
+                    .padding(.horizontal, 18)
+                    .padding(.vertical, 4)
+                    .background(Capsule().fill(settings.accentColor.opacity(0.18)))
                 Text("potentially in question")
                     .font(.caption)
                     .foregroundStyle(.secondary)
@@ -90,8 +94,7 @@ struct AnalysisView: View {
         .padding(.horizontal, 18)
         .frame(maxWidth: .infinity)
         .background(
-            RoundedRectangle(cornerRadius: 20, style: .continuous)
-                .fill(Color(.secondarySystemGroupedBackground))
+            BrandCard(radius: 20)
         )
     }
 
@@ -190,8 +193,7 @@ struct AnalysisView: View {
             .padding(.horizontal, 16)
             .padding(.vertical, 4)
             .background(
-                RoundedRectangle(cornerRadius: 18, style: .continuous)
-                    .fill(Color(.secondarySystemGroupedBackground))
+                BrandCard(radius: 20)
             )
         }
         .confirmationDialog("Clear your list?",
@@ -271,8 +273,7 @@ struct AnalysisView: View {
             }
             .padding(.horizontal, 16)
             .background(
-                RoundedRectangle(cornerRadius: 18, style: .continuous)
-                    .fill(Color(.secondarySystemGroupedBackground))
+                BrandCard(radius: 20)
             )
         }
     }
@@ -339,7 +340,7 @@ struct AnalysisView: View {
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 6)
         }
-        .buttonStyle(.borderedProminent)
+        .buttonStyle(BrandButtonStyle())
         .controlSize(.large)
     }
 
@@ -372,8 +373,7 @@ struct AnalysisView: View {
             }
             .padding(.horizontal, 16)
             .background(
-                RoundedRectangle(cornerRadius: 18, style: .continuous)
-                    .fill(Color(.secondarySystemGroupedBackground))
+                BrandCard(radius: 20)
             )
 
             Text(analysis.editedByUser == true

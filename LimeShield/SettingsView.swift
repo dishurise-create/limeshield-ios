@@ -20,6 +20,7 @@ struct SettingsView: View {
             dataSection
             advancedSection
         }
+        .brandBackground()
         .navigationTitle("Settings")
         .navigationBarTitleDisplayMode(.inline)
         .sheet(isPresented: $showPaywall) { PaywallView() }

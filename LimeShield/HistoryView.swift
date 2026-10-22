@@ -20,6 +20,7 @@ struct HistoryView: View {
                     }
                 }
             }
+            .brandBackground()
             .navigationTitle("Past scans")
             .toolbar {
                 if !store.analyses.isEmpty {
@@ -47,7 +48,7 @@ struct HistoryView: View {
                 .padding(.horizontal, 40)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color(.systemGroupedBackground))
+        .brandBackground()
     }
 
     private func row(_ analysis: BillAnalysis) -> some View {

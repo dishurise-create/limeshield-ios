@@ -7,8 +7,8 @@ struct OnboardingView: View {
 
     private let pages: [(icon: String, title: String, body: String)] = [
         ("doc.text.magnifyingglass",
-         "Most bills have errors",
-         "Duplicate charges, inflated prices, math that doesn't add up."),
+         "Bills can hide mistakes",
+         "Duplicate charges, high prices, math that doesn't add up."),
         ("lock.shield.fill",
          "Private by design",
          "Read and checked on this phone. No uploads, no account, no server."),
@@ -23,10 +23,14 @@ struct OnboardingView: View {
                 ForEach(pages.indices, id: \.self) { index in
                     VStack(spacing: 20) {
                         Image(systemName: pages[index].icon)
-                            .font(.system(size: 60))
-                            .foregroundStyle(settings.accentColor)
+                            .font(.system(size: 48, weight: .semibold))
+                            .foregroundStyle(Brand.buttonColors(for: settings.accentTheme).text)
+                            .frame(width: 120, height: 120)
+                            .background(Circle().fill(Brand.buttonColors(for: settings.accentTheme).fill))
+                            .shadow(color: Brand.limeFill.opacity(0.35), radius: 16, x: 0, y: 8)
                         Text(pages[index].title)
-                            .font(.title.weight(.bold))
+                            .font(.title.weight(.heavy))
+                            .foregroundStyle(Brand.ink)
                             .multilineTextAlignment(.center)
                         Text(pages[index].body)
                             .font(.body)
@@ -50,10 +54,11 @@ struct OnboardingView: View {
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 6)
             }
-            .buttonStyle(.borderedProminent)
+            .buttonStyle(BrandButtonStyle())
             .controlSize(.large)
             .padding(.horizontal, 28)
             .padding(.bottom, 28)
         }
+        .background(BrandBackground())
     }
 }

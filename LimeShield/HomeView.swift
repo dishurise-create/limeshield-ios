@@ -22,14 +22,10 @@ struct HomeView: View {
             ScrollView {
                 VStack(spacing: 22) {
                     if hasScans {
-                        // The mark stays on the page once there is history too, just
-                        // smaller, so the screen still reads as Lime Shield rather
-                        // than as a bare number.
-                        Image("Logo")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 72, height: 72)
-                            .accessibilityHidden(true)
+                        // Same headline as the App Store screenshots and posts, so
+                        // the app and its marketing look like one thing.
+                        MarkerHeadline(first: "Check your bill", marked: "before you pay.", size: 28)
+                            .padding(.top, 4)
                         resultsHero
                     } else {
                         firstRunHero
@@ -47,7 +43,7 @@ struct HomeView: View {
                 .padding(.top, 12)
                 .padding(.bottom, 32)
             }
-            .background(Color(.systemGroupedBackground))
+            .brandBackground()
             .navigationTitle("Lime Shield")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -92,10 +88,12 @@ struct HomeView: View {
                 .frame(width: 96, height: 96)
                 .accessibilityHidden(true)
 
-            Text("Know what to question\nbefore you pay.")
-                .font(.title2.weight(.semibold))
+            MarkerHeadline(first: "Check your bill", marked: "before you pay.")
+
+            Text("Snap a photo. See what's worth asking about.")
+                .font(.subheadline.weight(.medium))
+                .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
-                .fixedSize(horizontal: false, vertical: true)
 
             privacyBadge
         }
@@ -106,12 +104,11 @@ struct HomeView: View {
     private var resultsHero: some View {
         VStack(spacing: 6) {
             Text("Flagged so far")
-                .font(.caption.weight(.semibold))
-                .tracking(0.6)
-                .foregroundStyle(.secondary)
+                .font(.subheadline.weight(.bold))
+                .foregroundStyle(Brand.ink)
 
             Text(store.totalFlagged.usd)
-                .font(.system(size: 46, weight: .bold, design: .rounded))
+                .font(.system(size: 50, weight: .heavy, design: .rounded))
                 .foregroundStyle(settings.accentColor)
                 .minimumScaleFactor(0.6)
                 .lineLimit(1)
@@ -132,18 +129,17 @@ struct HomeView: View {
         .padding(.vertical, 22)
         .frame(maxWidth: .infinity)
         .background(
-            RoundedRectangle(cornerRadius: 20, style: .continuous)
-                .fill(Color(.secondarySystemGroupedBackground))
+            BrandCard(radius: 20)
         )
     }
 
     private var privacyBadge: some View {
         Label(Disclaimers.privacy, systemImage: "lock.fill")
-            .font(.caption.weight(.medium))
+            .font(.caption.weight(.semibold))
             .padding(.horizontal, 12)
-            .padding(.vertical, 6)
-            .background(Capsule().fill(settings.accentColor.opacity(0.14)))
-            .foregroundStyle(settings.accentColor)
+            .padding(.vertical, 7)
+            .background(Capsule().fill(settings.accentColor.opacity(0.16)))
+            .foregroundStyle(settings.accentTheme == .lime ? Brand.ink : settings.accentColor)
     }
 
     // MARK: Scan target
@@ -155,24 +151,28 @@ struct HomeView: View {
             startScan()
         } label: {
             ZStack {
-                RoundedRectangle(cornerRadius: 22, style: .continuous)
-                    .fill(settings.accentColor.opacity(0.10))
+                BrandCard(radius: 26)
 
                 ViewfinderCorners(inset: 14, length: 34, radius: 22)
-                    .stroke(settings.accentColor, style: StrokeStyle(lineWidth: 3, lineCap: .round))
+                    .stroke(settings.accentColor, style: StrokeStyle(lineWidth: 3.5, lineCap: .round))
 
-                VStack(spacing: 10) {
+                VStack(spacing: 12) {
                     Image(systemName: "camera.viewfinder")
-                        .font(.system(size: 40, weight: .regular))
+                        .font(.system(size: 30, weight: .semibold))
+                        .foregroundStyle(Brand.buttonColors(for: settings.accentTheme).text)
+                        .frame(width: 66, height: 66)
+                        .background(Circle().fill(Brand.buttonColors(for: settings.accentTheme).fill))
+                        .shadow(color: Brand.buttonColors(for: settings.accentTheme).fill.opacity(0.4),
+                                radius: 10, x: 0, y: 5)
                     Text("Scan a bill")
-                        .font(.title3.weight(.semibold))
+                        .font(.title2.weight(.heavy))
+                        .foregroundStyle(Brand.ink)
                     Text("Photograph each page")
-                        .font(.caption)
+                        .font(.subheadline)
                         .foregroundStyle(.secondary)
                 }
-                .foregroundStyle(settings.accentColor)
             }
-            .frame(height: 190)
+            .frame(height: 210)
         }
         .buttonStyle(.plain)
     }
@@ -194,13 +194,12 @@ struct HomeView: View {
         Button(action: action) {
             HStack(spacing: 8) {
                 Image(systemName: icon).font(.subheadline)
-                Text(title).font(.subheadline.weight(.medium))
+                Text(title).font(.subheadline.weight(.bold))
             }
             .frame(maxWidth: .infinity)
             .padding(.vertical, 14)
             .background(
-                RoundedRectangle(cornerRadius: 14, style: .continuous)
-                    .fill(Color(.secondarySystemGroupedBackground))
+                BrandCard(radius: 20)
             )
         }
         .buttonStyle(.plain)
@@ -219,19 +218,18 @@ struct HomeView: View {
         }
         .padding(.horizontal, 16)
         .background(
-            RoundedRectangle(cornerRadius: 18, style: .continuous)
-                .fill(Color(.secondarySystemGroupedBackground))
+            BrandCard(radius: 20)
         )
     }
 
     private func stepRow(_ number: Int, _ title: String) -> some View {
         HStack(spacing: 12) {
             Text("\(number)")
-                .font(.caption.weight(.bold))
-                .frame(width: 22, height: 22)
-                .background(Circle().fill(settings.accentColor.opacity(0.16)))
-                .foregroundStyle(settings.accentColor)
-            Text(title).font(.subheadline)
+                .font(.subheadline.weight(.heavy))
+                .frame(width: 30, height: 30)
+                .background(Circle().fill(Brand.buttonColors(for: settings.accentTheme).fill))
+                .foregroundStyle(Brand.buttonColors(for: settings.accentTheme).text)
+            Text(title).font(.subheadline.weight(.semibold)).foregroundStyle(Brand.ink)
             Spacer()
         }
         .padding(.vertical, 13)
