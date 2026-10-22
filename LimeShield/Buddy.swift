@@ -13,7 +13,10 @@ struct ShieldBuddy: View {
 
     @Environment(\.brandTheme) private var theme
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    @State private var blink = false
+    /// 0 = open, 1 = shut. Animated, so the lid closes and opens smoothly.
+    @State private var lid: CGFloat = 0
+    /// Where the pupils look, from -1 to 1 on each axis.
+    @State private var gaze: CGSize = .zero
     @State private var bob = false
 
     var body: some View {
@@ -30,33 +33,74 @@ struct ShieldBuddy: View {
         .frame(width: size, height: size * 1.12)
         .offset(y: bob ? -size * 0.04 : size * 0.02)
         .accessibilityHidden(true)
+        .onChange(of: mood) { _, _ in
+            withAnimation(.spring(response: 0.45, dampingFraction: 0.75)) { gaze = restingGaze }
+        }
         .task {
+            gaze = restingGaze
             guard !reduceMotion else { return }
-            withAnimation(.easeInOut(duration: 1.6).repeatForever(autoreverses: true)) { bob = true }
-            while !Task.isCancelled {
-                try? await Task.sleep(for: .seconds(Double.random(in: 2.5...4.5)))
-                withAnimation(.easeInOut(duration: 0.09)) { blink = true }
-                try? await Task.sleep(for: .milliseconds(120))
-                withAnimation(.easeInOut(duration: 0.09)) { blink = false }
+            withAnimation(.easeInOut(duration: 1.8).repeatForever(autoreverses: true)) { bob = true }
+            await withTaskGroup(of: Void.self) { group in
+                group.addTask { await blinkLoop() }
+                group.addTask { await lookLoop() }
             }
+        }
+    }
+
+    /// Where the eyes settle for each mood: thinking looks up and to the side,
+    /// surprised looks straight out, happy looks slightly down at the screen.
+    private var restingGaze: CGSize {
+        switch mood {
+        case .thinking: return CGSize(width: 0.55, height: -0.6)
+        case .wow:      return .zero
+        case .happy:    return CGSize(width: 0, height: 0.25)
+        }
+    }
+
+    /// Blinks at uneven intervals, sometimes twice in a row, like a person.
+    /// Closing is quick and opening a little slower.
+    @MainActor private func blinkLoop() async {
+        while !Task.isCancelled {
+            try? await Task.sleep(for: .seconds(Double.random(in: 2.2...5.0)))
+            let times = Double.random(in: 0...1) < 0.2 ? 2 : 1
+            for _ in 0..<times {
+                withAnimation(.easeIn(duration: 0.07)) { lid = 1 }
+                try? await Task.sleep(for: .milliseconds(80))
+                withAnimation(.easeOut(duration: 0.14)) { lid = 0 }
+                try? await Task.sleep(for: .milliseconds(170))
+            }
+        }
+    }
+
+    /// Glances somewhere new, holds it for a moment, then drifts back to the
+    /// resting point. Springs make each eye movement ease in and settle.
+    @MainActor private func lookLoop() async {
+        while !Task.isCancelled {
+            try? await Task.sleep(for: .seconds(Double.random(in: 1.4...3.2)))
+            let target = CGSize(width: .random(in: -0.9...0.9), height: .random(in: -0.6...0.7))
+            withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) { gaze = target }
+            try? await Task.sleep(for: .seconds(Double.random(in: 0.7...1.6)))
+            withAnimation(.spring(response: 0.6, dampingFraction: 0.85)) { gaze = restingGaze }
         }
     }
 
     private var face: some View {
         let eye = size * 0.17
+        let eyeHeight = eye * 1.2
         return VStack(spacing: size * 0.07) {
             HStack(spacing: size * 0.2) {
                 ForEach(0..<2, id: \.self) { _ in
                     ZStack {
                         Capsule().fill(.white)
-                            .frame(width: eye, height: blink ? eye * 0.15 : eye * 1.2)
-                        if !blink {
-                            Circle().fill(theme.deep)
-                                .frame(width: eye * 0.52)
-                                .offset(x: mood == .thinking ? eye * 0.2 : 0,
-                                        y: mood == .thinking ? -eye * 0.25 : eye * 0.12)
-                        }
+                        Circle().fill(theme.deep)
+                            .frame(width: eye * 0.52)
+                            // Pupils move within the white, and both eyes move together.
+                            .offset(x: gaze.width * eye * 0.22, y: gaze.height * eyeHeight * 0.22)
                     }
+                    .frame(width: eye, height: eyeHeight)
+                    .clipShape(Capsule())
+                    // The lid squashes the whole eye towards a line.
+                    .scaleEffect(x: 1, y: max(0.1, 1 - lid * 0.9), anchor: .center)
                 }
             }
             mouth
