@@ -49,9 +49,9 @@ def render(out):
     L = A.LIGHT
     cx = HW // 2
     # three fanned phones in the middle
-    A.place(img, A.phone_layer(os.path.join(L, "finding.png"), 1380), cx - 560, 260, 9)
+    A.place(img, A.phone_layer(os.path.join(L, "walkthrough.png"), 1380), cx - 560, 260, 9)
     A.place(img, A.phone_layer(os.path.join(L, "home.png"), 1380), cx + 560, 260, -9)
-    A.place(img, A.phone_layer(os.path.join(L, "results.png"), 1500), cx, 150, 0)
+    A.place(img, A.phone_layer(os.path.join(L, "reveal.png"), 1500), cx, 150, 0)
 
     # stickers either side of the phones
     for t, a, c, x, y, ang in [("Same charge twice", "$150", A.ORANGE, cx - 1500, 300, 5),

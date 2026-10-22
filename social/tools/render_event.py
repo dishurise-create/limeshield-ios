@@ -58,8 +58,8 @@ def card(out):
     w, h = 1920, 1080
     img = background(w, h, 5)
     L = A.LIGHT
-    A.place(img, A.phone_layer(os.path.join(L, "finding.png"), 860), 1180, 170, 8)
-    A.place(img, A.phone_layer(os.path.join(L, "results.png"), 940), 1560, 90, -6)
+    A.place(img, A.phone_layer(os.path.join(L, "walkthrough.png"), 860), 1180, 170, 8)
+    A.place(img, A.phone_layer(os.path.join(L, "reveal.png"), 940), 1560, 90, -6)
     bp = A.bill_paper(-10)
     bp = bp.resize((int(bp.width * 0.95), int(bp.height * 0.95)))
     A.shadow_paste(img, bp, 360, 150)
@@ -72,7 +72,7 @@ def details(out):
     w, h = 1080, 1920
     img = background(w, h, 9)
     L = A.LIGHT
-    A.place(img, A.phone_layer(os.path.join(L, "results.png"), 1050), 600, 200, -5)
+    A.place(img, A.phone_layer(os.path.join(L, "reveal.png"), 1050), 600, 200, -5)
     bp = A.bill_paper(12)
     bp = bp.resize((int(bp.width * 0.72), int(bp.height * 0.72)))
     A.shadow_paste(img, bp, 40, 760)

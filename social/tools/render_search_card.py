@@ -31,9 +31,9 @@ def render(out):
     d.text((cx, 535), l2, font=f, fill=A.INK, anchor="mm")
 
     L = A.LIGHT
-    A.place(img, A.phone_layer(os.path.join(L, "finding.png"), 1800), cx - 760, 960, 9)
+    A.place(img, A.phone_layer(os.path.join(L, "walkthrough.png"), 1800), cx - 760, 960, 9)
     A.place(img, A.phone_layer(os.path.join(L, "home.png"), 1800), cx + 760, 960, -9)
-    A.place(img, A.phone_layer(os.path.join(L, "results.png"), 1950), cx, 820, 0)
+    A.place(img, A.phone_layer(os.path.join(L, "reveal.png"), 1950), cx, 820, 0)
 
     for t, a, c, x, y, ang in [("Same charge twice", "$150", A.ORANGE, 90, 1150, 5),
                                ("Doesn't add up", "$150", A.RED, 200, 1500, -4)]:

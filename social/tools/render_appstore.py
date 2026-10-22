@@ -328,7 +328,7 @@ def render(out):
     # 1. Hero
     headline(d, X[0], "Check your bill", "before you pay.",
              "Snap a photo. See what's worth asking about, in seconds.")
-    place(img, phone_layer(os.path.join(LIGHT, "results.png"), 1980), X[0] + 700, 830, 4)
+    place(img, phone_layer(os.path.join(LIGHT, "reveal.png"), 1980), X[0] + 700, 830, 4)
     # bill + magnifier straddle panels 1 and 2
     bp = bill_paper(-12)
     shadow_paste(img, bp, X[1] - bp.width / 2 - 60, 2240)
@@ -352,7 +352,7 @@ def render(out):
     # 3. What to say
     headline(d, X[2], "Know exactly", "what to say.",
              "The question to ask billing, and what to say if they push back.")
-    place(img, phone_layer(os.path.join(LIGHT, "finding.png"), 1900), X[2] + 520, 860, -5)
+    place(img, phone_layer(os.path.join(LIGHT, "walkthrough.png"), 1900), X[2] + 520, 860, -5)
     b1 = bubble("THEY MAY SAY", "The service was performed twice.",
                 WHITE, (142, 142, 147), INK, 700).rotate(3, resample=Image.BICUBIC, expand=True)
     shadow_paste(img, b1, X[2] + 560, 1500)
