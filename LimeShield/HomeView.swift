@@ -24,6 +24,9 @@ struct HomeView: View {
     @State private var displayedFlagged: Double = 0
     @State private var flaggedDelta: Double = 0
     @State private var celebrate = false
+    /// True from the moment a count-up starts until the confetti is gone, so a
+    /// second check fired by the same navigation can't cancel it.
+    @State private var celebrating = false
     @State private var glow = false
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
@@ -70,6 +73,10 @@ struct HomeView: View {
                 nextUpDetail(target)
             }
             .onAppear(perform: refreshFlagged)
+            // Coming back from the overview or a finding doesn't always fire
+            // onAppear, so also check when those screens close.
+            .onChange(of: newAnalysis) { _, value in if value == nil { refreshFlagged() } }
+            .onChange(of: nextUp) { _, value in if value == nil { refreshFlagged() } }
         }
         .overlay {
             if celebrate { ConfettiView().transition(.opacity) }
@@ -199,6 +206,11 @@ struct HomeView: View {
     /// Counts the total up from what the user last saw, with confetti, whenever it
     /// has grown since their last visit to this screen.
     private func refreshFlagged() {
+        // While the X-ray, the overview or a finding is covering Home, wait.
+        // Home can "appear" underneath those screens, and celebrating there would
+        // use up the confetti where nobody can see it.
+        guard revealAnalysis == nil, pendingAnalysis == nil,
+              newAnalysis == nil, nextUp == nil, !celebrating else { return }
         let total = store.totalFlagged
         defer { lastSeenFlagged = total }
         guard lastSeenFlagged >= 0, total > lastSeenFlagged + 0.5 else {
@@ -209,12 +221,14 @@ struct HomeView: View {
         flaggedDelta = total - lastSeenFlagged
         displayedFlagged = lastSeenFlagged
         guard !reduceMotion else { displayedFlagged = total; return }
+        celebrating = true
         Task {
             try? await Task.sleep(for: .milliseconds(400))
             withAnimation(.easeOut(duration: 1.2)) { displayedFlagged = total }
             withAnimation { celebrate = true }
             try? await Task.sleep(for: .seconds(3))
             withAnimation { celebrate = false }
+            celebrating = false
         }
     }
 

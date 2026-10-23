@@ -182,43 +182,46 @@ private struct Triangle: Shape {
 // MARK: - Confetti
 
 /// A short burst of falling confetti. Doesn't block taps. Shown when the home
-/// screen's flagged total goes up.
+/// screen's flagged total goes up. Each piece is a plain view with a normal
+/// SwiftUI animation (no frame timer), so it draws reliably right after other
+/// screens close.
 struct ConfettiView: View {
-    private struct Piece {
-        let x: CGFloat, vx: CGFloat, vy: CGFloat, spin: Double, size: CGFloat, color: Color
+    private struct Piece: Identifiable {
+        let id = UUID()
+        let x: CGFloat, drift: CGFloat, spin: Double, size: CGFloat
+        let delay: Double, duration: Double, color: Color
     }
 
     @Environment(\.brandTheme) private var theme
-    @State private var start = Date()
     @State private var pieces: [Piece] = []
+    @State private var fallen = false
 
     var body: some View {
-        TimelineView(.animation) { timeline in
-            Canvas { context, size in
-                let t = timeline.date.timeIntervalSince(start)
-                for p in pieces {
-                    let x = p.x * size.width + p.vx * t
-                    let y = -20 + p.vy * t + 260 * t * t
-                    guard y < size.height + 30 else { continue }
-                    let fade = max(0, min(1, 2.6 - t))
-                    var c = context
-                    c.opacity = fade
-                    c.translateBy(x: x, y: y)
-                    c.rotate(by: .degrees(p.spin * t))
-                    c.fill(Path(roundedRect: CGRect(x: -p.size / 2, y: -p.size, width: p.size, height: p.size * 2),
-                                cornerRadius: 2), with: .color(p.color))
+        GeometryReader { geo in
+            ZStack(alignment: .topLeading) {
+                ForEach(pieces) { p in
+                    RoundedRectangle(cornerRadius: 2)
+                        .fill(p.color)
+                        .frame(width: p.size, height: p.size * 2)
+                        .rotationEffect(.degrees(fallen ? p.spin : 0))
+                        .position(x: p.x * geo.size.width + (fallen ? p.drift : 0),
+                                  y: fallen ? geo.size.height + 40 : -30)
+                        .opacity(fallen ? 0 : 1)
+                        .animation(.easeIn(duration: p.duration).delay(p.delay), value: fallen)
                 }
             }
         }
         .allowsHitTesting(false)
         .ignoresSafeArea()
         .onAppear {
-            start = Date()
             let colors: [Color] = [theme.bright, theme.color, .orange, .yellow, .pink, .blue]
-            pieces = (0..<90).map { _ in
-                Piece(x: .random(in: 0...1), vx: .random(in: -60...60), vy: .random(in: 40...220),
-                      spin: .random(in: -360...360), size: .random(in: 5...9), color: colors.randomElement()!)
+            pieces = (0..<80).map { _ in
+                Piece(x: .random(in: 0...1), drift: .random(in: -70...70), spin: .random(in: -540...540),
+                      size: .random(in: 5...9), delay: .random(in: 0...0.5),
+                      duration: .random(in: 1.8...2.8), color: colors.randomElement()!)
             }
+            // Next run loop, so the pieces are on screen at the top before falling.
+            DispatchQueue.main.async { fallen = true }
         }
     }
 }
