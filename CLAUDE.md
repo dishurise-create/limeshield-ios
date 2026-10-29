@@ -105,7 +105,9 @@ chat. Compiling the real sources means the tests cannot drift from the app.
   https://apps.apple.com/us/app/lime-shield/id6811397021
   Build 2 was rejected; build 3 was resubmitted 2026-09-24 with a reply to
   App Review (`app-review-reply-2.1b.txt`).
-- Next: version 1.0.1 (build 4), not yet uploaded. Adds free-trial wording to
+- LIVE: version 1.0.1 (build 4), uploaded 2026-10-22 and released 2026-10-28
+  (moved up from the Oct 30 date on the featuring nomination). Adds the
+  Shield Buddy, Bill X-ray, buddy walkthrough, new Home and 4 new checks, plus free-trial wording to
   the paywall, the refund request letter, free-tier counts that survive
   a reinstall, a "Spread the word" section in Settings (share the app, rate
   it), and a rating prompt shown once per version after a letter for a real
@@ -116,14 +118,14 @@ chat. Compiling the real sources means the tests cannot drift from the app.
   `limeshield://scan`, so the event must be submitted with 1.0.1. The 1-week introductory offer was turned on early, on
   2026-10-07.
 - App Store featuring nomination submitted 2026-10-08 (App Enhancements) for
-  1.0.1 with a publish date of 2026-10-30. 1.0.1 must be released that day
-  (submit for review with manual release, then click Release on Oct 30).
-- New App Store screenshots for 1.0.1 are in social/posts/appstore/ (01-05,
-  1320x2868), made by social/tools/render_appstore.py. Upload them with the
-  1.0.1 version; screenshots can only change with a new version.
+  1.0.1 with a publish date of 2026-10-30; 1.0.1 went out two days early.
+- In-App Event "Open Enrollment Bill Check" (limeshield://scan) submitted
+  with 1.0.1; runs Nov 1 to Dec 15 if approved.
+- App Store screenshots (01-05, 1320x2868; 1206x2622 copies in
+  medium-1206x2622/), header and search card are in social/posts/appstore/,
+  made by social/tools/render_appstore.py and friends. Live with 1.0.1.
 - The 1-week free trial is LIVE (introductory offer on Pro Monthly, confirmed
-  2026-10-08). Posts and outreach may mention it. The live 1.0 paywall text
-  doesn't mention it yet; 1.0.1 fixes that.
+  2026-10-08). Posts and outreach may mention it. 1.0.1's paywall shows it.
 - Shipaton deadline: 2026-09-30 23:45 PT. The app had to be live by then.
   Winners announced 2026-10-22. Entered in Next Gen (the only category open
   to minors): needs the public repo, a student email and parental consent.
