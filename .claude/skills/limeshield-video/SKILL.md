@@ -22,7 +22,9 @@ Highlights are orange, never red. Never invent statistics or studies.
 ## Stage 1: Pitch ideas ⏸
 
 Before pitching, list the earlier videos in `~/Documents/LimeSheild app/aitrends-2d-studio/projects/`
-and in `social/posts/tiktok/` so nothing repeats.
+and in `social/posts/tiktok/` so nothing repeats. Then search the web (YouTube/TikTok)
+for each candidate topic: if a big video (≈1M+ views) already tells that exact
+story, drop it or find a fresh angle, and say so in the pitch.
 
 Pitch **5 ideas**. Each one gets:
 - **Title**: "What If ...?" format, 6-8 words, Title Case, about the viewer
@@ -47,16 +49,32 @@ Write the script in the channel voice. Output exactly:
 TOPIC: <title>
 SCRIPT: <one paragraph of spoken text>
 ```
-- **80-95 words** (30-40 s). Check by timing it:
-  `say -r 175 -f script.txt -o /tmp/x.aiff && afinfo /tmp/x.aiff | grep duration`
-  It must come out at 30-40 s. Trim if longer.
-- Second person, present tense. Very short sentences (4-5 words on average).
-  "..." before every payoff. Numbers written out in words. A "Most people...
-  You?" contrast. One question for the comments at the end.
-- Structure: hook (0-2 s) → the bill and the stakes (2-8 s) → the X-ray/scan
-  moment (8-20 s) → the calm lesson ("you just ask for the itemized bill") →
-  title restated as the turn ("So what if you had...? Turns out... you can.") →
-  Lime Shield reveal with 2-3 true facts → comment question.
+- **105-120 words** (30-38 s). Viral shorts run about 3.5-4 words a second
+  with almost no dead air; videos 1-2 ran 2.5 and felt slow. Check by timing it:
+  `say -r 210 -f script.txt -o /tmp/x.aiff && afinfo /tmp/x.aiff | grep duration`
+  It must come out at 30-38 s. Trim if longer.
+- Second person, present tense, plain spoken English, contractions. Numbers
+  written out in words. **At most 2-3 "..." in the whole script**, only before
+  the biggest payoffs; everything else flows straight on.
+- **Formula** (from studying viral animated shorts):
+  1. **Hook** (0-2 s): a strange-but-true bill moment stated as fact. No setup.
+  2. **Setting + stakes** (2-8 s): the bill, the number, concrete details.
+  3. **Escalation** (8-18 s): 2-3 beats, each a little bigger (the X-ray/scan
+     moment, flagged lines glowing).
+  4. **"You see,"**: the pivot into the explanation, with an **everyday
+     comparison** ("You see, a hospital bill is like a restaurant receipt. You'd
+     never pay one that just says 'Food: two thousand dollars.'").
+  5. **One "Luckily... / Unluckily..." deadpan line built on a true fact**
+     ("Luckily, it was only one blood test. Unluckily, you paid for it twice.").
+     Must be honest and match a real app check; never imply fraud.
+  6. **The calm lesson**: you just ask (itemized bill, review).
+  7. **Lime Shield in about 5 s max**: name + 2 true facts + "free to try".
+  8. **End on a punchline/twist line** (a callback to the hook), not a slow
+     fade. The comment question goes in the caption/pinned comment, or is the
+     punchline itself if it lands as one.
+- The title is shown on screen; the narrator doesn't have to say it.
+- Facts first: write the true facts the script relies on at the top of
+  `script.md` (which rule fires, what the law says) before writing the lines.
 - Save it to `social/posts/tiktok/<slug>/script.md`.
 
 ### Hook rules (the user wants stronger hooks than video 1)
@@ -78,7 +96,8 @@ bills?"), which is OK but slow. Do better:
 
 Then tell the user exactly what to do next:
 1. Paste **only the SCRIPT text** (not the TOPIC line) into ElevenLabs. Voice
-   used so far: "Mike - 2D & 3D POV Storytime".
+   used so far: "Mike - 2D & 3D POV Storytime". Nudge the **Speed** slider up a
+   little (about 1.05-1.1) so it lands near 3.5 words a second.
 2. Download the MP3 into `~/Documents/LimeSheild app/`.
 3. Say "voiceover's ready".
 
@@ -114,11 +133,33 @@ Lime Shield specifics:
   (1.5 looks tiny); table top = `GY - 92*s`; keep text out of the bottom 25%
   (captions sit at 79% of the height); keep readouts clear of arms and props;
   give big numbers a dark panel behind them so they don't collide with rows.
-- Shot plan: about 18-20 shots for 38 s, median about 1.8 s (fast for TikTok).
-  Captions off on title cards and the end screen.
+- **config.json settings** (set right after new_project):
+  `"fps": 30`, `"captionStyle": {"max": 1}` (one word at a time, gold pop on
+  the current word), `"music": {"enabled": true, "gainDb": -10}` (music ~10 dB
+  under the voice, not 17), `"fadeIn": 0` (hook visible at frame 0).
+- **Shot plan**: about 14-18 shots for 35 s. Almost no hard cuts: join shots
+  with the studio's transitions in shots.json (`"in": {"type": "flash"}` after
+  the hook and on big reveals, `"fade"`/`"dipWhite"` 0.25-0.3 s for place
+  changes, `"zoom"` into the X-ray, `"whip"` at most once). A hard cut only for
+  a deliberate jolt. Captions off on title cards and the end screen.
+- **Camera always moving**: every shot slowly pushes in (about 3-8% scale over
+  the shot, faster on punch words). No static holds. Moves glide over about
+  0.8-1 s with ease in-out (`ease.inOut`), never a 3-frame snap. Small 3-5°
+  tilts for drama. Every visual reaction lands 0-3 frames before its word
+  (`wordTime()`).
+- **Lighting follows the story**: setup warm and bright (amber key), switch to
+  deep night blue at the "You see," explanation, back to warm/lime for the Lime
+  Shield reveal. No pure black anywhere (lift the darks); shadows purple-blue,
+  never brown. Saturated colours.
 - Look before rendering: `node render.mjs --project projects/<slug> --sheet --scale 0.5`,
   read `build/sheets/sheet_01.png`, fix, then check with `--stills`.
-- Final: `node render.mjs --project projects/<slug> --format jpeg` (about 1 min),
+- **Independent check before the final render**: give a fresh agent the
+  contact sheet + 3-4 stills and have it score out of 10: hook clarity in frame
+  1, readability (text clear of captions/props), camera motion, colour/lighting,
+  character framing, brand rules (orange not red, nothing accusatory). It
+  returns a numbered fix list with timestamps. Fix, re-check stills, then render.
+  Measure, don't opine: ask for numbers and specific frames, not impressions.
+- Final: `node render.mjs --project projects/<slug> --format jpeg` (about 1.5 min at 30 fps),
   then `python3 audio/mix.py --project projects/<slug>`. Check with ffprobe
   (1080x1920, audio present, duration matches) and a contact sheet.
 - Copy to `~/Documents/LimeSheild app/LimeShield-<slug>.mp4` and send it with
