@@ -50,6 +50,11 @@ counter, a mailbox, a car, a waiting room...) and a different story shape
 (countdown, before/after, myth vs fact, one bill line close-up, a race...)
 from the last two in the log.
 
+**Start from the idea bank**: `social/posts/tiktok/idea-bank.md` holds researched
+scenarios where Lime Shield is the clear solution (each mapped to a real check
+and app feature). Pitch from it first (mark used ones as done), and add new
+ideas to it.
+
 Pitch **5 ideas**. Each one gets:
 - **Title**: "What If ...?" format, 6-8 words, Title Case, about the viewer
   (You/Your), one change pushed to an extreme, readable in 2 seconds.
@@ -74,10 +79,12 @@ Write the script in the channel voice. Output exactly:
 TOPIC: <title>
 SCRIPT: <one paragraph of spoken text>
 ```
-- **105-120 words** (30-38 s). Viral shorts run about 3.5-4 words a second
-  with almost no dead air; videos 1-2 ran 2.5 and felt slow. Check by timing it:
-  `say -r 210 -f script.txt -o /tmp/x.aiff && afinfo /tmp/x.aiff | grep duration`
-  It must come out at 30-38 s. Trim if longer.
+- **95-108 words** (target 30-35 s). Calibrated on video 3: the ElevenLabs
+  "Mike" voice at Speed 1.10 read 121 words in 40 s (3.0 words/s), too slow and
+  too long. Viral shorts run 3.5-4 words/s. So: at most 108 words, and the user
+  sets Speed to **1.2** (the maximum). Check with
+  `say -r 210 -f script.txt -o /tmp/x.aiff && afinfo /tmp/x.aiff | grep duration`:
+  it must come out at 26-31 s (ElevenLabs runs ~15% slower than `say -r 210`).
 - Second person, present tense, plain spoken English, contractions. Numbers
   written out in words. **At most 2-3 "..." in the whole script**, only before
   the biggest payoffs; everything else flows straight on.
@@ -93,9 +100,11 @@ SCRIPT: <one paragraph of spoken text>
      Say a **search phrase** ("hospital bill", "medical bill", "itemized bill")
      in the hook or within the first 5 s; YouTube and Instagram search read the
      speech, on-screen text and caption.
-  1b. **Foreshadow** (2-4 s, one short line): what's coming, the conflict, and
-     what the viewer gets by the end ("One of these lines is worth a phone
-     call. Let's find it.").
+  1b. **Foreshadow** (2-4 s, one short line) that **promises a payoff**: it must
+     tell the viewer what they'll get by the end ("Here's the one question
+     that fixes it." / "One of these lines is worth a phone call. Let's find
+     it."). A line that only states the stakes ("it's too late") does NOT count
+     (video 3 made this mistake).
   2. **Setting + stakes** (4-8 s): the bill, the number, concrete details.
   3. **Escalation** (8-18 s): 2-3 beats, each a little bigger (the X-ray/scan
      moment, flagged lines glowing).
@@ -109,9 +118,15 @@ SCRIPT: <one paragraph of spoken text>
   7. **APP videos only: Lime Shield in about 5 s max**: name + 2 true facts +
      "free to try". (TIP videos skip this; the end pill does the work.)
   8. **End on the strongest feeling**: the biggest twist or the funniest line,
-     which is also the loop line back into the hook. No slow fade, no "thanks
-     for watching". The comment question goes in the caption/pinned comment.
-- The title is shown on screen; the narrator doesn't have to say it.
+     which is also the loop line back into the hook. Test it twice: (a) read
+     last line → first line, it must sound like one sentence; (b) read the last
+     line alone, it must land as a punchline or twist even without the loop.
+     Video 3's "So next time you book, and they ask..." passed (a) but failed
+     (b). No slow fade, no "thanks for watching". The comment question goes in
+     the caption/pinned comment.
+- The title is **shown on screen inside the video** (not only on the cover):
+  a ~1 s title overlay on a transition beat (e.g. after the foreshadow, or
+  over the "You see," turn), top third, dark panel. The narrator doesn't say it.
 - Facts first: write the true facts the script relies on at the top of
   `script.md` (which rule fires, what the law says) before writing the lines.
 - Save it to `social/posts/tiktok/<slug>/script.md`.
@@ -135,10 +150,27 @@ bills?"), which is OK but slow. Do better:
   work as the thumbnail.
 - Must still be honest: no fake statistics, no "hospitals are scamming you".
 
+**⏸ Pre-voiceover checklist.** Show this table to the user under the script,
+every row filled in honestly (✅ / ❌ + the exact line). Fix any ❌ before
+asking for the voiceover:
+| Check | Line / number |
+|---|---|
+| Hook ≤ 8 words, strange-but-true, search phrase in first 5 s | |
+| Foreshadow promises a payoff | |
+| "but/so" links, no "and then" | |
+| "You see," + everyday comparison | |
+| Honest "Luckily / Unluckily" | |
+| Calm lesson (just ask) | |
+| APP: Lime Shield ≤ 5 s with a clear, true solution / TIP: no app line | |
+| Last line: loops into hook AND lands alone as a punchline | |
+| 95-108 words, `say -r 210` 26-31 s | |
+| Where the title appears on screen | |
+| Facts written at top of script.md with sources | |
+
 Then tell the user exactly what to do next:
 1. Paste **only the SCRIPT text** (not the TOPIC line) into ElevenLabs. Voice
-   used so far: "Mike - 2D & 3D POV Storytime". Nudge the **Speed** slider up a
-   little (about 1.05-1.1) so it lands near 3.5 words a second.
+   used so far: "Mike - 2D & 3D POV Storytime". Set the **Speed** slider to
+   **1.2** (the maximum).
 2. Download the MP3 into `~/Documents/LimeSheild app/`.
 3. Say "voiceover's ready".
 
@@ -160,6 +192,17 @@ Lime Shield specifics:
   If the voiceover also says the title, add it to script.txt where it is
   spoken and re-run transcribe. A match of about 87% is fine when the only
   differences are digits ("50" vs "fifty"). Check `timeline/transcript.txt`.
+- **Cut the title read-out**: ElevenLabs reads the TOPIC line first even when
+  only the script is pasted (happened in all 3 videos). Find the first silence
+  with `ffmpeg -i input/voiceover.mp3 -af silencedetect=n=-40dB:d=0.2 -f null -`,
+  check those seconds with Whisper, keep the original as
+  `input/voiceover_with_title.mp3`, and trim with
+  `ffmpeg -ss <cut> -i input/voiceover_with_title.mp3 -c:a libmp3lame -b:a 192k input/voiceover.mp3`,
+  then re-run transcribe. The hook must start at ~0.0 s.
+- **Pace check**: words ÷ duration after trimming. If under 3.3 words/s or
+  longer than 36 s, speed the voice up (pitch stays the same) before building:
+  `ffmpeg -i input/voiceover.mp3 -filter:a atempo=1.08 input/voiceover_fast.mp3`
+  (max 1.12), swap it in, re-run transcribe and beats.
 - **Reuse video 1** (`projects/limeshield-xray`) instead of starting from
   nothing: copy `scenes/cast.js` (YOU = lime-green hoodie `#3fb950`) and the
   sets in `scenes/sets/` (`kitchen.js`: night kitchen, table, mug,
@@ -219,6 +262,13 @@ Lime Shield specifics:
   (1080x1920, audio present, duration matches) and a contact sheet.
 - Copy to `~/Documents/LimeSheild app/LimeShield-<slug>.mp4` and send it with
   SendUserFile.
+- **Pre-render technique checklist**: before the final render, go through
+  every rule in this skill (script formula, hook on mute, foreshadow payoff,
+  punchline + loop, title on screen, pace, safe zones, one-word captions,
+  fps 30, music -10, transitions instead of hard cuts, constant camera motion,
+  lighting arc, zip SFX + one riser, APP/TIP rule, new set/story shape,
+  independent check). In the final message, list anything that was missed or
+  only half done, honestly, before the user has to ask.
 
 ## Stage 4: Captions
 
