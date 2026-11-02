@@ -1,11 +1,19 @@
 ---
 name: limeshield-video
-description: Make a Lime Shield promo video ("What If" 2D animated short, 30-40 s, 9:16) end to end. Use when the user asks for a new Lime Shield video, TikTok, Reel, Short, or "make the next video". Runs in stages with user checkpoints: pitch ideas → user picks → write script → WAIT for the user's ElevenLabs voiceover → build the video in the aiTrends 2D Studio → captions for every platform → cover photo.
+description: Make a Lime Shield promo video ("What If" 2D animated short, 30-40 s, 9:16) end to end. Use when the user asks for a new Lime Shield video, Reel, Short, or "make the next video". Posted to YouTube Shorts, Instagram Reels, Facebook and X (not TikTok). Runs in stages with user checkpoints: pitch ideas → user picks → write script → WAIT for the user's ElevenLabs voiceover → build the video in the aiTrends 2D Studio → captions for every platform → cover photo.
 ---
 
 # Lime Shield video pipeline
 
 Five stages. Stop at each checkpoint (⏸) and wait for the user. Never skip ahead.
+
+Platforms: **YouTube Shorts, Instagram Reels, Facebook, X.** The user does
+NOT post to TikTok; don't write TikTok captions or TikTok advice. (The
+`social/posts/tiktok/` folder name is historical; keep using it.)
+
+Video log: `social/posts/tiktok/video-log.md` (create if missing), one row per
+video: slug, date, type (app / tip), set used, story structure, hook. Read it
+in Stage 1, add a row at the end of Stage 5.
 
 Lime Shield facts you may use (all true): free iPhone app, reads a photo of a
 medical bill, about 50 checks, runs entirely on the phone (the bill never
@@ -22,9 +30,25 @@ Highlights are orange, never red. Never invent statistics or studies.
 ## Stage 1: Pitch ideas ⏸
 
 Before pitching, list the earlier videos in `~/Documents/LimeSheild app/aitrends-2d-studio/projects/`
-and in `social/posts/tiktok/` so nothing repeats. Then search the web (YouTube/TikTok)
-for each candidate topic: if a big video (≈1M+ views) already tells that exact
-story, drop it or find a fresh angle, and say so in the pitch.
+and in `social/posts/tiktok/` (plus the video log) so nothing repeats. Then search
+the web (YouTube, Instagram) for each candidate topic: if a big video (≈1M+
+views) already tells that exact story, drop it or find a fresh angle, and say
+so in the pitch.
+
+**App videos vs tip videos.** Accounts that post mostly ads get less reach;
+aim for roughly 4 tip videos to every 1 app video over time (check the log).
+- **App video**: full formula, Lime Shield reveal (≈5 s), X-ray beat.
+- **Tip video**: pure bill tip that helps even people who never download
+  anything; Lime Shield appears only as a 2-second pill/watermark at the end
+  (no reveal, no "free to try" line in the voiceover; the caption carries the
+  app mention).
+Label every pitch APP or TIP, and say which one the log says is due.
+
+**Vary each video.** YouTube demotes near-identical template videos. Each new
+video uses a different main set or a new one (kitchen, desk, a pharmacy
+counter, a mailbox, a car, a waiting room...) and a different story shape
+(countdown, before/after, myth vs fact, one bill line close-up, a race...)
+from the last two in the log.
 
 Pitch **5 ideas**. Each one gets:
 - **Title**: "What If ...?" format, 6-8 words, Title Case, about the viewer
@@ -38,6 +62,7 @@ Pitch **5 ideas**. Each one gets:
   `credit_balance` (they owe YOU money), `already_paid`, `financial_assistance`,
   `self_pay_no_discount`, `missed_appointment_fee`, `out_of_network`,
   insurer EOB mistaken for a bill.
+- **Type**: APP or TIP.
 - **Why people stop scrolling**: one line.
 
 Mark your favourite with ⭐. Then ask the user to pick one, or mix and match.
@@ -56,9 +81,22 @@ SCRIPT: <one paragraph of spoken text>
 - Second person, present tense, plain spoken English, contractions. Numbers
   written out in words. **At most 2-3 "..." in the whole script**, only before
   the biggest payoffs; everything else flows straight on.
+- **Write the hook and the last line first**, then fill in the middle. The
+  last line must **loop into the hook**: read the last line, then the first,
+  and it should sound like one sentence (e.g. last "...so next time a bill
+  says" → first "negative eighty dollars, don't throw it out."). Viewers who
+  don't notice the restart rewatch, and rewatches are a big signal.
+- Join beats with **"but" and "so"**, never "and then". Each beat should cause
+  or complicate the next.
 - **Formula** (from studying viral animated shorts):
   1. **Hook** (0-2 s): a strange-but-true bill moment stated as fact. No setup.
-  2. **Setting + stakes** (2-8 s): the bill, the number, concrete details.
+     Say a **search phrase** ("hospital bill", "medical bill", "itemized bill")
+     in the hook or within the first 5 s; YouTube and Instagram search read the
+     speech, on-screen text and caption.
+  1b. **Foreshadow** (2-4 s, one short line): what's coming, the conflict, and
+     what the viewer gets by the end ("One of these lines is worth a phone
+     call. Let's find it.").
+  2. **Setting + stakes** (4-8 s): the bill, the number, concrete details.
   3. **Escalation** (8-18 s): 2-3 beats, each a little bigger (the X-ray/scan
      moment, flagged lines glowing).
   4. **"You see,"**: the pivot into the explanation, with an **everyday
@@ -68,10 +106,11 @@ SCRIPT: <one paragraph of spoken text>
      ("Luckily, it was only one blood test. Unluckily, you paid for it twice.").
      Must be honest and match a real app check; never imply fraud.
   6. **The calm lesson**: you just ask (itemized bill, review).
-  7. **Lime Shield in about 5 s max**: name + 2 true facts + "free to try".
-  8. **End on a punchline/twist line** (a callback to the hook), not a slow
-     fade. The comment question goes in the caption/pinned comment, or is the
-     punchline itself if it lands as one.
+  7. **APP videos only: Lime Shield in about 5 s max**: name + 2 true facts +
+     "free to try". (TIP videos skip this; the end pill does the work.)
+  8. **End on the strongest feeling**: the biggest twist or the funniest line,
+     which is also the loop line back into the hook. No slow fade, no "thanks
+     for watching". The comment question goes in the caption/pinned comment.
 - The title is shown on screen; the narrator doesn't have to say it.
 - Facts first: write the true facts the script relies on at the top of
   `script.md` (which rule fires, what the law says) before writing the lines.
@@ -90,8 +129,10 @@ bills?"), which is OK but slow. Do better:
 - Or an **open loop** that the video pays off: "One line on this bill... is
   worth a phone call."
 - Under 2 seconds, under 8 words, no setup, no "Hey guys", no title first.
-- Show the payoff visual in the first frame (the glowing line, the number), so
-  a muted scroller gets it too.
+- **The hook must work on mute.** Frame 1 has all three at once: the picture
+  (the glowing line, the number), a short on-screen hook text (≤6 words, top
+  third, big, dark panel behind it), and the spoken hook. Frame 1 should also
+  work as the thumbnail.
 - Must still be honest: no fake statistics, no "hospitals are scamming you".
 
 Then tell the user exactly what to do next:
@@ -127,16 +168,25 @@ Lime Shield specifics:
   Edit `ROWS` in kitchen.js for the new bill. Write new shots for the new story.
 - Signature beats to keep in every video: flash into X-ray mode with the gold
   beam sweep; flagged lines glow orange; a calm "just ask" moment; the glowing
-  lime shield + "LIME SHIELD" reveal; "FREE TO TRY"; an end screen with the
-  comment question and a Lime Shield pill.
+  lime shield + "LIME SHIELD" reveal; "FREE TO TRY" (APP videos). TIP videos
+  keep the X-ray look but end with only a small Lime Shield pill over the
+  final shot (no end card, so the loop still works).
 - Framing lessons from video 1: in 9:16, standing figures need `s` ≈ 2.3-2.5
-  (1.5 looks tiny); table top = `GY - 92*s`; keep text out of the bottom 25%
-  (captions sit at 79% of the height); keep readouts clear of arms and props;
-  give big numbers a dark panel behind them so they don't collide with rows.
+  (1.5 looks tiny); table top = `GY - 92*s`; keep readouts clear of arms and
+  props; give big numbers a dark panel behind them so they don't collide with rows.
+- **Safe zones (Shorts/Reels buttons and caption overlay)**: nothing important
+  in the bottom 420 px, the right 140 px (like/comment/share column) or the
+  top 200 px of the 1080x1920 frame. Keep all text and key props inside the
+  central x 80-940, y 200-1500 box. Captions sit at y ≈ 1380 (72%).
 - **config.json settings** (set right after new_project):
-  `"fps": 30`, `"captionStyle": {"max": 1}` (one word at a time, gold pop on
-  the current word), `"music": {"enabled": true, "gainDb": -10}` (music ~10 dB
-  under the voice, not 17), `"fadeIn": 0` (hook visible at frame 0).
+  `"fps": 30`, `"captionStyle": {"max": 1, "y": 1380}` (one word at a time,
+  gold pop on the current word, above the app overlays),
+  `"music": {"enabled": true, "gainDb": -10}` (music ~10 dB under the voice,
+  not 17), `"fadeIn": 0` (hook visible at frame 0), `"fadeOut": 0` (so the
+  loop back to frame 1 is seamless).
+- **Loop the picture too**: the last shot ends on (or glides into) the same
+  framing as shot 1, so the restart feels continuous. The last words land in
+  the last 0.3 s; no dead tail.
 - **Shot plan**: about 14-18 shots for 35 s. Almost no hard cuts: join shots
   with the studio's transitions in shots.json (`"in": {"type": "flash"}` after
   the hook and on big reveals, `"fade"`/`"dipWhite"` 0.25-0.3 s for place
@@ -151,11 +201,16 @@ Lime Shield specifics:
   deep night blue at the "You see," explanation, back to warm/lime for the Lime
   Shield reveal. No pure black anywhere (lift the darks); shadows purple-blue,
   never brown. Saturated colours.
+- **Sound design**: short midrange "zip" whooshes on transitions (they read on
+  phone speakers; skip long bassy sweeps), one riser only before the big
+  reveal, a hit on the flagged-line glow. Use SFX as punctuation, not on every
+  cut.
 - Look before rendering: `node render.mjs --project projects/<slug> --sheet --scale 0.5`,
   read `build/sheets/sheet_01.png`, fix, then check with `--stills`.
 - **Independent check before the final render**: give a fresh agent the
   contact sheet + 3-4 stills and have it score out of 10: hook clarity in frame
-  1, readability (text clear of captions/props), camera motion, colour/lighting,
+  1 (works on mute?), readability (text clear of captions/props and inside the
+  safe zone), loop (does the last frame flow into the first?), camera motion, colour/lighting,
   character framing, brand rules (orange not red, nothing accusatory). It
   returns a numbered fix list with timestamps. Fix, re-check stills, then render.
   Measure, don't opine: ask for numbers and specific frames, not impressions.
@@ -168,12 +223,21 @@ Lime Shield specifics:
 ## Stage 4: Captions
 
 Give one ready-to-paste caption per platform, each in its own code block:
-- **TikTok**: hook line + 2-3 short lines + "link in bio" + comment question + 4-5 hashtags.
-- **Instagram Reels**: a little longer, "link in bio", about 8 hashtags; post as a Reel.
-- **YouTube Shorts**: title under 100 characters with #shorts, plus a description with the App Store link.
+- **YouTube Shorts**: title under 100 characters with the search phrase near
+  the front and #shorts, plus a description with the App Store link (Shorts
+  description links aren't clickable in the player, so also pin a comment).
+  Remind the user to set **"Related video"** in YouTube Studio (Details →
+  Related video, desktop) to the previous Lime Shield Short, so the Shorts
+  link into each other.
+- **Instagram Reels**: search phrase in the first line, "link in bio", about
+  8 hashtags; post as a Reel.
 - **Facebook**: a longer, warmer version, link in the post (upload the video natively).
 - **X**: under 280 characters including the link.
-Every caption: "built by an 11th grader", "free to try", never accusatory.
+Every caption: the same search phrase that's spoken and on screen; a **send
+line** ("Send this to someone who just got a hospital bill." Instagram counts
+shares sent per view as a top signal); "built by an 11th grader"; never
+accusatory. APP videos add "free to try". TIP videos mention Lime Shield
+lightly in the last line only.
 Save them to `social/posts/tiktok/<slug>/captions.md`.
 
 ## Stage 5: Cover photo
@@ -187,5 +251,9 @@ bottom. Keep the important parts between 12% and 88% of the height
 fix overlaps, save as `~/Documents/LimeSheild app/LimeShield-<slug>-cover.png`,
 and send it.
 
+Add the video's row to `social/posts/tiktok/video-log.md` (slug, date,
+APP/TIP, set, story shape, hook).
+
 Finish with a short list: where the MP4 and cover are, and the order to post
-(all platforms the same evening; pin a comment answering your own question).
+(all platforms the same evening; pin a comment answering your own question;
+set the YouTube Related video link).
