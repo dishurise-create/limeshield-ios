@@ -1,15 +1,16 @@
 ---
 name: limeshield-video
-description: Make a Lime Shield promo video ("What If" 2D animated short, 30-40 s, 9:16) end to end. Use when the user asks for a new Lime Shield video, Reel, Short, or "make the next video". Posted to YouTube Shorts, Instagram Reels, Facebook and X (not TikTok). Runs in stages with user checkpoints: pitch ideas → user picks → write script → WAIT for the user's ElevenLabs voiceover → build the video in the aiTrends 2D Studio → captions for every platform → cover photo.
+description: Make a Lime Shield promo video (2D animated short in the bright Rick's-Clips-like cartoon style, 30-40 s, 9:16, emphasis-moment hook) end to end. Use when the user asks for a new Lime Shield video, Reel, Short, or "make the next video". Posted to YouTube Shorts, Instagram Reels, TikTok, Facebook and X. Runs in stages with user checkpoints: pitch ideas → user picks → write script → WAIT for the user's ElevenLabs voiceover → build the video in the aiTrends 2D Studio → captions for every platform → cover photo.
 ---
 
 # Lime Shield video pipeline
 
 Five stages. Stop at each checkpoint (⏸) and wait for the user. Never skip ahead.
 
-Platforms: **YouTube Shorts, Instagram Reels, Facebook, X.** The user does
-NOT post to TikTok; don't write TikTok captions or TikTok advice. (The
-`social/posts/tiktok/` folder name is historical; keep using it.)
+Platforms: **YouTube Shorts, Instagram Reels, TikTok, Facebook, X.** The user
+started TikTok on 2026-11-05 (stats reach the Socials dashboard through
+Metricool). Write a TikTok caption for every video. Files live in
+`social/posts/tiktok/`.
 
 Video log: `social/posts/tiktok/video-log.md` (create if missing), one row per
 video: slug, date, type (app / tip), set used, story structure, hook. Read it
@@ -56,9 +57,12 @@ and app feature). Pitch from it first (mark used ones as done), and add new
 ideas to it.
 
 Pitch **5 ideas**. Each one gets:
-- **Title**: "What If ...?" format, 6-8 words, Title Case, about the viewer
-  (You/Your), one change pushed to an extreme, readable in 2 seconds.
-- **Hook (first line, under 2 s)**: the exact opening words (see Hook rules).
+- **Title**: since video 7, Rick's-Clips-style **"Why ..."** curiosity title
+  about a character ("Why He Was Buried in Gauze Pads", "Why Grandma Paid a Bill
+  That Wasn't a Bill"), 5-8 words, Title Case, readable in 2 seconds. (Videos
+  1-6 used "What If ...?".)
+- **Hook (first line, under 2 s)**: the exact opening words AND the frame-1
+  emphasis moment, the loudest picture in the story (see Hook rules).
 - **The bill moment**: which real app check the video dramatises. Pick from
   the rules engine (`LimeShield/RulesEngine*.swift`), e.g. duplicate lines on
   the same day (`blood_draw_repeat`, `repeat_across_dates`), `comfort_items`
@@ -85,7 +89,9 @@ SCRIPT: <one paragraph of spoken text>
   sets Speed to **1.2** (the maximum). Check with
   `say -r 210 -f script.txt -o /tmp/x.aiff && afinfo /tmp/x.aiff | grep duration`:
   it must come out at 26-31 s (ElevenLabs runs ~15% slower than `say -r 210`).
-- Second person, present tense, plain spoken English, contractions. Numbers
+- **Third person** ("He stayed one night..."), told like a little true-ish
+  legend, the Rick's Clips way (since video 7; videos 1-6 were "you"). Present
+  or past tense, plain spoken English, contractions. Numbers
   written out in words. **At most 2-3 "..." in the whole script**, only before
   the biggest payoffs; everything else flows straight on.
 - **Write the hook and the last line first**, then fill in the middle. The
@@ -111,9 +117,11 @@ SCRIPT: <one paragraph of spoken text>
   4. **"You see,"**: the pivot into the explanation, with an **everyday
      comparison** ("You see, a hospital bill is like a restaurant receipt. You'd
      never pay one that just says 'Food: two thousand dollars.'").
-  5. **One "Luckily... / Unluckily..." deadpan line built on a true fact**
-     ("Luckily, it was only one blood test. Unluckily, you paid for it twice.").
-     Must be honest and match a real app check; never imply fraud.
+  5. **The twist line**: one short, honest line built on a true fact that ties
+     the comparison back to the bill ("Nobody checks the middle, so the twin
+     hides on page five."). Must match a real app check; never imply fraud.
+     **Never use the "Luckily... / Unluckily..." pattern** (the user asked for
+     it to be dropped, 2026-11-05).
   6. **The calm lesson**: you just ask (itemized bill, review).
   7. **APP videos only: Lime Shield in about 5 s max**: name + 2 true facts +
      "free to try". (TIP videos skip this; the end pill does the work.)
@@ -132,6 +140,20 @@ SCRIPT: <one paragraph of spoken text>
 - Save it to `social/posts/tiktok/<slug>/script.md`.
 
 ### Hook rules (the user wants stronger hooks than video 1)
+**The hook is a moment of emphasis (user rule, 2026-11-06).** Too many viewers
+swiped away in the first second on every platform, because frame 1 was calm.
+Now frame 1 is the **loudest moment of the whole story** (the climax picture,
+not the setup): the gauze avalanche burying the bed, the stamp slamming down,
+the number hitting the screen. On frame 1, all at once:
+- the character frozen mid-reaction (shock face, comic impact lines);
+- a camera impact: start slightly pushed in with a short shake that decays in
+  about 0.4 s, then keep pushing;
+- a hit + stinger SFX at 0.0 s;
+- the spoken hook stated as plain fact, under 8 words;
+- the on-screen hook text (≤6 words, top third, dark panel).
+The story then rewinds ("He stayed one night.") to explain how it got there.
+No calm establishing shot first, ever.
+
 Video 1 opened by reading the title ("What if you had X-ray vision for
 bills?"), which is OK but slow. Do better:
 - **The first words are the hook, not the title.** The title appears on screen
@@ -156,10 +178,11 @@ asking for the voiceover:
 | Check | Line / number |
 |---|---|
 | Hook ≤ 8 words, strange-but-true, search phrase in first 5 s | |
+| Frame 1 = the loudest moment of the story (emphasis hook) | |
 | Foreshadow promises a payoff | |
 | "but/so" links, no "and then" | |
 | "You see," + everyday comparison | |
-| Honest "Luckily / Unluckily" | |
+| Honest twist line (no "Luckily / Unluckily") | |
 | Calm lesson (just ask) | |
 | APP: Lime Shield ≤ 5 s with a clear, true solution / TIP: no app line | |
 | Last line: loops into hook AND lands alone as a punchline | |
@@ -185,8 +208,29 @@ Lime Shield specifics:
 - Studio: `~/Documents/LimeSheild app/aitrends-2d-studio/`. **Always first**
   `export PATH="$HOME/.local/aitrends-tools/bin:$PATH"` (Node and ffmpeg live there;
   without it doctor reports MISSING). `python3`, not `python`.
-- Settings: 9:16, 1080p, captions on, generated music + SFX, style `dusk`.
-  Don't ask the user about settings or style; just go.
+- Settings: 9:16, 1080p, captions on, generated music + SFX, style
+  **`daylight`** (added to `engine/styles.js` for video 7). Don't ask the user
+  about settings or style; just go.
+- **Visual style (since video 7, user's choice, modelled on the YouTube
+  channel Rick's Clips, @ricksclips55)**:
+  - **Characters**: `scenes/lib/toon.js` from `projects/limeshield-gauze`
+    (`toon()` / `toonHead()`): big round WHITE head with a thick black outline,
+    small bean body with a patterned top (plaid / stripes / diamond), black
+    stick arms and legs, faces `deadpan` (half-lidded, thick brows) / `shock` /
+    `squint` / `calm` / `sleep`, optional `hair` or `cap`. NOT the old black
+    stick-figure rig. Head radius ≈ 110-125 for standing wide shots.
+  - **Sets**: bright saturated daylight, deep perspective, low camera. Use 3D
+    (Three.js, `sets/room3d.js` pattern) for rooms, with the 2D character
+    drawn on top via `overlay` and positioned with `project()`; 2D sets
+    (`sets/porch.js` pattern) with parallax `layer()`s for outdoors.
+    Close-ups on bright sunburst backgrounds (`sets/paper.js`: `bigBill`,
+    `phone`, `sunburst`, `pizzaBox`, `syringe`).
+  - **Keep the character on screen** in most shots (the reviewer's main
+    note on video 7: half the shots were object-only close-ups). Put a small
+    reaction head or hand in close-ups.
+  - Rick's backgrounds have painted textures (wood grain, gravel); ours are
+    smoother. Add canvas textures to 3D materials when there's time.
+  - Night/dark scenes only for a deliberate flashback; otherwise stay bright.
 - New project: `python3 tools/new_project.py --name <slug> --voice "<mp3>" --script <script.txt> --aspect 9:16 --resolution 1080p --title "<title>" --captions`,
   then `tools/transcribe.py ... --model small`, then `tools/beats.py --force`.
   If the voiceover also says the title, add it to script.txt where it is
@@ -217,13 +261,15 @@ Lime Shield specifics:
 - Framing lessons from video 1: in 9:16, standing figures need `s` ≈ 2.3-2.5
   (1.5 looks tiny); table top = `GY - 92*s`; keep readouts clear of arms and
   props; give big numbers a dark panel behind them so they don't collide with rows.
-- **Safe zones (Shorts/Reels buttons and caption overlay)**: nothing important
+- **Safe zones (Shorts/Reels/TikTok buttons and caption overlay)**: nothing important
   in the bottom 420 px, the right 140 px (like/comment/share column) or the
   top 200 px of the 1080x1920 frame. Keep all text and key props inside the
   central x 80-940, y 200-1500 box. Captions sit at y ≈ 1380 (72%).
 - **config.json settings** (set right after new_project):
-  `"fps": 30`, `"captionStyle": {"max": 1, "y": 1380}` (one word at a time,
-  gold pop on the current word, above the app overlays),
+  `"fps": 30`, `"captionStyle": {"max": 1, "y": 1380, "lower": true, "hi": "#ffffff", "size": 92, "stroke": 0.24, "strokeColor": "#000000", "font": "Nunito", "weight": 900}`
+  (Rick's-Clips captions: one lowercase word at a time, white with a thick
+  black outline; the `lower`/`stroke`/`font` options were added to
+  `engine/ui2d.js` for video 7),
   `"music": {"enabled": true, "gainDb": -10}` (music ~10 dB under the voice,
   not 17), `"fadeIn": 0` (hook visible at frame 0), `"fadeOut": 0` (so the
   loop back to frame 1 is seamless).
@@ -235,14 +281,30 @@ Lime Shield specifics:
   the hook and on big reveals, `"fade"`/`"dipWhite"` 0.25-0.3 s for place
   changes, `"zoom"` into the X-ray, `"whip"` at most once). A hard cut only for
   a deliberate jolt. Captions off on title cards and the end screen.
+- **Research the animation, not just the script** (user rule, 2026-11-02):
+  before building, search how the best videos in this video's visual style
+  move (e.g. game feel for a game theme: hit-stop, impact frames, damage
+  numbers, VS screens, battle menus) and list the techniques you'll use next
+  to the shot plan.
+- **Cause-and-effect chain** (video 4's first half was rebuilt for this): write
+  the shot list as one chain where every shot is caused by the one before
+  ("the call connects → the duplicate lines peel off the bill → they merge into
+  the boss → VS screen → it attacks → you pick LIME SHIELD → the card →
+  the beam hits"). If a shot could be swapped with its neighbour without
+  anyone noticing, the chain is broken. Objects carry across cuts (the same
+  bill line, the same card), screen direction stays consistent, and every cut
+  is motivated by an action or a word.
+- **No static shots**: change the angle or the subject every 1-2 s (close-up,
+  low angle, insert, wide); something on screen moves in every frame.
 - **Camera always moving**: every shot slowly pushes in (about 3-8% scale over
   the shot, faster on punch words). No static holds. Moves glide over about
   0.8-1 s with ease in-out (`ease.inOut`), never a 3-frame snap. Small 3-5°
   tilts for drama. Every visual reaction lands 0-3 frames before its word
   (`wordTime()`).
-- **Lighting follows the story**: setup warm and bright (amber key), switch to
-  deep night blue at the "You see," explanation, back to warm/lime for the Lime
-  Shield reveal. No pure black anywhere (lift the darks); shadows purple-blue,
+- **Lighting follows the story** (daylight style): bright daylight
+  throughout; change the background colour per beat instead of going dark
+  (sky blue for the bill, yellow for the stamp/number, cool blue for the "You
+  see," comparison, green for the fix/reveal). No pure black anywhere (lift the darks); shadows purple-blue,
   never brown. Saturated colours.
 - **Sound design**: short midrange "zip" whooshes on transitions (they read on
   phone speakers; skip long bassy sweeps), one riser only before the big
@@ -283,6 +345,11 @@ Give one ready-to-paste caption per platform, each in its own code block:
   8 hashtags; post as a Reel.
 - **Facebook**: a longer, warmer version, link in the post (upload the video natively).
 - **X**: under 280 characters including the link.
+- **TikTok**: search phrase in the first line (TikTok search reads the
+  caption, the speech and the on-screen text), a comment prompt ("Comment
+  where it is 👇"), "linked in bio" (caption links aren't clickable, so the
+  App Store link lives in the bio), 4-6 hashtags. Upload the cover image as
+  the TikTok cover.
 Every caption: the same search phrase that's spoken and on screen; a **send
 line** ("Send this to someone who just got a hospital bill." Instagram counts
 shares sent per view as a top signal); "built by an 11th grader"; never
@@ -292,9 +359,10 @@ Save them to `social/posts/tiktok/<slug>/captions.md`.
 
 ## Stage 5: Cover photo
 
-Copy `projects/limeshield-cover` (a one-shot project: config duration 2,
-captions off, single shot id `cover`) to a new project and rewrite
-`scenes/shots/04_cover.js` for this video: title text in the top 30%, the key
+Copy `projects/limeshield-gauze-cover` (the new-style one-shot cover project:
+config duration 2, captions off, single shot id `cover`, reuses the video's
+`scenes/lib` and `scenes/sets`) to a new project and rewrite
+`scenes/shots/cover.js` for this video (usually the frame-1 emphasis moment): title text in the top 30%, the key
 bill moment in the middle, the buddy face and the Lime Shield pill at the
 bottom. Keep the important parts between 12% and 88% of the height
 (Instagram's 3:4 grid crop). Render with `--stills 1.0 --scale 1`, look at it,
@@ -305,5 +373,5 @@ Add the video's row to `social/posts/tiktok/video-log.md` (slug, date,
 APP/TIP, set, story shape, hook).
 
 Finish with a short list: where the MP4 and cover are, and the order to post
-(all platforms the same evening; pin a comment answering your own question;
+(all five platforms the same evening; pin a comment answering your own question;
 set the YouTube Related video link).
